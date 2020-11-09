@@ -1,0 +1,5 @@
+include ':processor'
+include ':annotation'
+include ':utils'
+include ':app'
+rootProject.name = "android-plugins"
