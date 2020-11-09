@@ -22,5 +22,3 @@ publish {
 }
 
 
-//gradlew clean build bintrayUpload -PbintrayUser=foolishchow
-// -PbintrayKey=48bacf28a656fc1780062f191e8dd45e9062b859 -PdryRun=false

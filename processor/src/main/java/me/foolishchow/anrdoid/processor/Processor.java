@@ -50,7 +50,7 @@ public class Processor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        /**
+        /*
          * 1- Find all annotated element
          */
         for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceState.class)) {

@@ -34,9 +34,9 @@ ext {
     userOrg = 'foolishchow'
     groupId = 'me.foolishchow.android'
     uploadName = 'android'
-    publishVersion = '0.02'
+    publishVersion = '0.0.4'
     desc = "android annotation utils "
-    website = 'https://github.com/foolishchow'
+    website = 'https://github.com/foolishchow/android_plugins.git'
 }
 
 // ./gradlew clean build bintrayUpload -PbintrayUser=xx

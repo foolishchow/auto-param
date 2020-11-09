@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @InstanceState()
-    public int name;
+    public Integer name;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
