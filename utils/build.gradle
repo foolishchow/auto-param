@@ -35,6 +35,7 @@ dependencies {
 
 //添加
 publish {
+    repoName = rootProject.repoName
     artifactId = 'utils'
     userOrg = rootProject.userOrg
     groupId = rootProject.groupId

@@ -1,0 +1,256 @@
+class ProductFlavorInfo {
+
+    List<String> flavorDimensions
+    List<String> productFlavors
+    List<String> buildTypes
+    List<String> combinedProductFlavors
+    Map<String, List<String>> combinedProductFlavorsMap
+    boolean singleDimension
+
+    private List<List<String>> flavorGroups
+
+    ProductFlavorInfo(Project project) {
+        def extension = project.extensions.getByName("android")
+        buildTypes = new ArrayList<>()
+        if(extension.buildTypes != null) {
+            extension.buildTypes.each {
+                buildTypes.add(it.name)
+            }
+        }
+
+        flavorDimensions = extension.flavorDimensionList
+        if (flavorDimensions == null) {
+            flavorDimensions = new ArrayList<>()
+        }
+
+        productFlavors = new ArrayList<>()
+        flavorGroups = new ArrayList<>()
+        for (int i = 0; i < flavorDimensions.size(); i++) {
+            flavorGroups.add(new ArrayList<>())
+        }
+        extension.productFlavors.each {
+            productFlavors.add(it.name)
+            def position = flavorDimensions.indexOf(it.dimension)
+            flavorGroups.get(position).add(it.name)
+        }
+        List<List<String>> flavorGroupTemp = new ArrayList<>()
+        flavorGroups.each {
+            if (it.size() != 0) {
+                flavorGroupTemp.add(it)
+            }
+        }
+        flavorGroups = flavorGroupTemp
+
+        calculateFlavorCombination()
+        if (combinedProductFlavors.size() == extension.productFlavors.size()) {
+            singleDimension = true
+        }
+    }
+
+    private void calculateFlavorCombination() {
+        combinedProductFlavors = new ArrayList<>()
+        combinedProductFlavorsMap = new HashMap<>()
+
+        if (flavorGroups.size() == 0) {
+            return
+        }
+
+        List<Integer> combination = new ArrayList<Integer>()
+        int n = flavorGroups.size();
+        for (int i = 0; i < n; i++) {
+            combination.add(0);
+        }
+        int i = 0;
+        boolean isContinue = true;
+        while (isContinue) {
+            List<String> items = new ArrayList<>()
+            String item = flavorGroups.get(0).get(combination.get(0))
+            items.add(item)
+            String combined = item
+            for (int j = 1; j < n; j++) {
+                item = flavorGroups.get(j).get(combination.get(j))
+                combined += Utils.upperCase(item)
+                items.add(item)
+            }
+            combinedProductFlavors.add(combined)
+            combinedProductFlavorsMap.put(combined, items)
+            i++;
+            combination.set(n - 1, i);
+            for (int j = n - 1; j >= 0; j--) {
+                if (combination.get(j) >= flavorGroups.get(j).size()) {
+                    combination.set(j, 0);
+                    i = 0;
+                    if (j - 1 >= 0) {
+                        combination.set(j - 1, combination.get(j - 1) + 1);
+                    }
+                }
+            }
+            isContinue = false;
+            for (Integer integer : combination) {
+                if (integer != 0) {
+                    isContinue = true;
+                }
+            }
+        }
+    }
+
+}
+
+interface OnModuleIncludeListener {
+    void addIncludeModule(String projectName)
+}
+interface IManifestMergePluginExtension{
+    void include(String projectName);
+    Set<String> getProjects();
+    void addModuleIncludeListener(OnModuleIncludeListener listener)
+}
+
+
+class ManifestMergePluginExtension implements  IManifestMergePluginExtension{
+
+    Set<String> projectSet = new HashSet<>();
+    Project project
+    OnModuleIncludeListener mListener;
+    ManifestMergePluginExtension(Project project) {
+        this.project = project
+    }
+
+    @Override
+    void include(String projectName) {
+        projectSet.add(projectName)
+        if(mListener != null){
+            mListener.addIncludeModule(projectName);
+        }
+    }
+
+    @Override
+    Set<String> getProjects() {
+        return projectSet
+    }
+
+    @Override
+    void addModuleIncludeListener(OnModuleIncludeListener listener) {
+        mListener = listener;
+    }
+}
+
+
+class ManifestMergePlugin implements Plugin<Project> {
+    Project project
+
+    @Override
+    void apply(Project project) {
+        this.project = project
+        def extension = project.extensions.create(
+                IManifestMergePluginExtension, 'pins',
+                ManifestMergePluginExtension,
+                project)
+
+        extension.addModuleIncludeListener(new OnModuleIncludeListener() {
+            @Override
+            void addIncludeModule(String projectName) {
+                addVariantSourceSet(projectName,"main")
+            }
+        });
+//        extension.getProjects().each {projectName->
+//            addVariantSourceSet(projectName,"main")
+//        }
+//        project.afterEvaluate{
+//            project.buildDir
+//            File mainManifestFile = new File(microModuleInfo.mainMicroModule.microModuleDir, "/src/${variantName}/AndroidManifest.xml")
+//            ManifestMerger2.Invoker invoker = new ManifestMerger2.Invoker(mainManifestFile, logger, mergeType, documentType)
+//
+//        }
+//        def extension  = project.extensions.create('greeting',GreetingPluginExtension)
+
+//        project.task('hello'){
+////            doLast {
+////                println extension.message
+////            }
+////        }
+    }
+
+
+    def addMicroModuleSourceSet(String microModule) {
+        addVariantSourceSet(microModule, 'main')
+
+        productFlavorInfo.buildTypes.each {
+            addVariantSourceSet(microModule, it)
+        }
+
+        if (!productFlavorInfo.singleDimension) {
+            productFlavorInfo.productFlavors.each {
+                addVariantSourceSet(microModule, it)
+            }
+        }
+
+        productFlavorInfo.combinedProductFlavors.each {
+            addVariantSourceSet(microModule, it)
+            def flavorName = it
+            productFlavorInfo.buildTypes.each {
+                addVariantSourceSet(microModule, flavorName + Utils.upperCase(it))
+            }
+        }
+
+        def testTypes = ['androidTest', 'test']
+        testTypes.each {
+            def testType = it
+            addVariantSourceSet(microModule, testType)
+
+            if (testType == 'test') {
+                productFlavorInfo.buildTypes.each {
+                    addVariantSourceSet(microModule, testType + Utils.upperCase(it))
+                }
+            } else {
+                addVariantSourceSet(microModule, testType + 'Debug')
+            }
+
+            if (!productFlavorInfo.singleDimension) {
+                productFlavorInfo.productFlavors.each {
+                    addVariantSourceSet(microModule, testType + Utils.upperCase(it))
+                }
+            }
+
+            productFlavorInfo.combinedProductFlavors.each {
+                def productFlavorName = testType + Utils.upperCase(it)
+                addVariantSourceSet(microModule, productFlavorName)
+
+                if (testType == 'test') {
+                    productFlavorInfo.buildTypes.each {
+                        addVariantSourceSet(microModule, productFlavorName + Utils.upperCase(it))
+                    }
+                } else {
+                    addVariantSourceSet(microModule, productFlavorName + 'Debug')
+                }
+            }
+        }
+    }
+
+
+    def addVariantSourceSet(String microModule, String type) {
+        println("$project.projectDir===>$microModule")
+
+        def absolutePath = project.projectDir;//microModule.microModuleDir.absolutePath
+        def android = project.extensions.getByName('android')
+        def obj = android.sourceSets.findByName(type)
+        if (obj == null) {
+            obj = android.sourceSets.create(type)
+        }
+
+//        println(obj.java.srcDir)
+//        obj.java.srcDir(absolutePath + "/src/${microModule}/java")
+//        obj.java.srcDir(absolutePath + "/src/${microModule}/kotlin")
+//        obj.res.srcDir(absolutePath + "/src/${microModule}/res")
+//        obj.jni.srcDir(absolutePath + "/src/${microModule}/jni")
+//        obj.jniLibs.srcDir(absolutePath + "/src/${microModule}/jniLibs")
+//        obj.aidl.srcDir(absolutePath + "/src/${microModule}/aidl")
+//        obj.assets.srcDir(absolutePath + "/src/${microModule}/assets")
+//        obj.shaders.srcDir(absolutePath + "/src/${microModule}/shaders")
+//        obj.resources.srcDir(absolutePath + "/src/${microModule}/resources")
+//        obj.renderscript.srcDir(absolutePath + "/src/${microModule}/rs")
+    }
+}
+
+
+apply plugin: ManifestMergePlugin
+
