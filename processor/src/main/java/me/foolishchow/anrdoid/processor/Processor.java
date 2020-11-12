@@ -32,13 +32,13 @@ public class Processor extends AbstractProcessor {
 
     private Messager messager;
     //存储添加了注解的Activity
-    private Map<String, HelperClass> mHelperClassMap = new HashMap<>();
+
     //可以处理相关Element（包括ExecutableElement, PackageElement, TypeElement, TypeParameterElement, VariableElement）
     private Elements elementUtils;
     //用来创建新源、类或辅助文件的 Filer。
     private Filer filer;
 
-    private Map<String, TypeMap> mTypeMap = new HashMap<>();
+
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -54,6 +54,8 @@ public class Processor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         System.out.println("=============process");
+        Map<String, HelperClass> mHelperClassMap = new HashMap<>();
+        Map<String, TypeMap> mTypeMap = new HashMap<>();
         /*
          * 1- Find all annotated element
          */
@@ -62,50 +64,20 @@ public class Processor extends AbstractProcessor {
             TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
             //所在类的完整类名
             String fullClassName = encloseElement.getQualifiedName().toString();
-
             TypeMap typeMap = mTypeMap.get(fullClassName);
             if(typeMap == null){
-                typeMap = new TypeMap(fullClassName);
+                typeMap = new TypeMap(encloseElement);
                 mTypeMap.put(fullClassName,typeMap);
             }
             typeMap.addElement(element);
-
-            //System.out.println("============="+fullClassName);
-            //getHelperClass(element);
-            //System.out.println("============="+element.getSimpleName());
-            //if (element.getKind() != ElementKind.CLASS) {
-            //    messager.printMessage(Diagnostic.Kind.ERROR, "Can be applied to class.");
-            //    return true;
-            //}
-            //
-            //TypeElement typeElement = (TypeElement) element;
-            //activitiesWithPackage.put(
-            //        typeElement.getSimpleName().toString(),
-            //        elements.getPackageOf(typeElement).getQualifiedName().toString());
         }
 
         for(TypeMap typeMap : mTypeMap.values()){
-            System.out.println("============="+typeMap.getName());
-            for(Element el : typeMap.getElements()){
-                print("=======name %s , class %s , package %s",
-                        el.getSimpleName(),
-                        typeMap.getName(),
-                        elementUtils.getPackageOf(el).getQualifiedName().toString()
-                );
-            }
-            //try {
-            //    //获取helperClass，调用其方法直接生成java代码
-            //    JavaFile javaFile = helperClass.generateCode();
-            //    if(javaFile != null){
-            //        javaFile.writeTo(filer);
-            //    }
-            //} catch (IOException e) {
-            //    e.printStackTrace();
-            //}
+            typeMap.generate(filer,elementUtils);
         }
 
         for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceState.class)) {
-            getHelperClass(element);
+            getHelperClass(mHelperClassMap,element);
         }
 
 
@@ -123,40 +95,11 @@ public class Processor extends AbstractProcessor {
             }
         }
 
-
-        ///**
-        // * 2- Generate a class
-        // */
-        //TypeSpec.Builder navigatorClass = TypeSpec
-        //        .classBuilder("Navigator")
-        //        .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-        //
-        //for (Map.Entry<String, String> element : activitiesWithPackage.entrySet()) {
-        //    String activityName = element.getKey();
-        //    String packageName = element.getValue();
-        //    ClassName activityClass = ClassName.get(packageName, activityName);
-        //    MethodSpec intentMethod = MethodSpec
-        //            .methodBuilder(METHOD_PREFIX + activityName)
-        //            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-        //            .returns(void.class)
-        //            .addParameter(classContext, "context")
-        //            .addStatement("$L.startActivity(new $T($L, $L))", "context", classIntent, "context", activityClass + ".class")
-        //            .build();
-        //    navigatorClass.addMethod(intentMethod);
-        //}
-        //
-        //
-        ///**
-        // * 3- Write generated class to a file
-        // */
-        //JavaFile.builder("com.annotationsample", navigatorClass.build()).build().writeTo(filer);
-
-
         return true;
     }
 
 
-    private HelperClass getHelperClass(Element element) {
+    private HelperClass getHelperClass(Map<String, HelperClass> mHelperClassMap,Element element) {
         TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
         //所在类的完整类名
         String fullClassName = encloseElement.getQualifiedName().toString();
