@@ -25,6 +25,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Class<MainActivity$ShadowLifeCycleDelegate> classes =
+        //        MainActivity$ShadowLifeCycleDelegate.class;
         mKernalViewBinding.mNavTitle.setText("sdasdasdasd");
         //setContentView(R.layout.activity_main);
         //MainActivity$ShadowLifeCycleDelegate mainActivity$ShadowLifeCycleDelegate = new MainActivity$ShadowLifeCycleDelegate();

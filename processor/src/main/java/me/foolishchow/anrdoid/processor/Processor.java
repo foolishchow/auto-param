@@ -1,8 +1,9 @@
 package me.foolishchow.anrdoid.processor;
 
 import me.foolishchow.android.annotation.InstanceState;
-import com.google.auto.service.AutoService;
-import com.google.common.collect.ImmutableSet;
+import me.foolishchow.android.annotation.IntentParam;
+import me.foolishchow.anrdoid.processor.activity.TypeMap;
+
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -10,6 +11,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,7 +28,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
-@AutoService(Processor.class)
 public class Processor extends AbstractProcessor {
 
     private Messager messager;
@@ -36,6 +37,8 @@ public class Processor extends AbstractProcessor {
     private Elements elementUtils;
     //用来创建新源、类或辅助文件的 Filer。
     private Filer filer;
+
+    private Map<String, TypeMap> mTypeMap = new HashMap<>();
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -50,11 +53,25 @@ public class Processor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        System.out.println("=============process");
         /*
          * 1- Find all annotated element
          */
-        for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceState.class)) {
-            getHelperClass(element);
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(IntentParam.class)) {
+
+            TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
+            //所在类的完整类名
+            String fullClassName = encloseElement.getQualifiedName().toString();
+
+            TypeMap typeMap = mTypeMap.get(fullClassName);
+            if(typeMap == null){
+                typeMap = new TypeMap(fullClassName);
+                mTypeMap.put(fullClassName,typeMap);
+            }
+            typeMap.addElement(element);
+
+            //System.out.println("============="+fullClassName);
+            //getHelperClass(element);
             //System.out.println("============="+element.getSimpleName());
             //if (element.getKind() != ElementKind.CLASS) {
             //    messager.printMessage(Diagnostic.Kind.ERROR, "Can be applied to class.");
@@ -66,6 +83,31 @@ public class Processor extends AbstractProcessor {
             //        typeElement.getSimpleName().toString(),
             //        elements.getPackageOf(typeElement).getQualifiedName().toString());
         }
+
+        for(TypeMap typeMap : mTypeMap.values()){
+            System.out.println("============="+typeMap.getName());
+            for(Element el : typeMap.getElements()){
+                print("=======name %s , class %s , package %s",
+                        el.getSimpleName(),
+                        typeMap.getName(),
+                        elementUtils.getPackageOf(el).getQualifiedName().toString()
+                );
+            }
+            //try {
+            //    //获取helperClass，调用其方法直接生成java代码
+            //    JavaFile javaFile = helperClass.generateCode();
+            //    if(javaFile != null){
+            //        javaFile.writeTo(filer);
+            //    }
+            //} catch (IOException e) {
+            //    e.printStackTrace();
+            //}
+        }
+
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceState.class)) {
+            getHelperClass(element);
+        }
+
 
         //遍历生成java代码
         for(HelperClass helperClass : mHelperClassMap.values()){
@@ -133,11 +175,27 @@ public class Processor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return ImmutableSet.of(InstanceState.class.getCanonicalName());
+        HashSet<String> set = new HashSet<>();
+        set.add(InstanceState.class.getCanonicalName());
+        set.add(IntentParam.class.getCanonicalName());
+        return set;
     }
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
+        return SourceVersion.RELEASE_6;
+    }
+
+    @Override
+    public Set<String> getSupportedOptions() {
+        return super.getSupportedOptions();
+    }
+
+    private void print(String template, Object... args){
+        if(args.length == 0){
+            System.out.println(template);
+        }else{
+            System.out.println(String.format(template,args));
+        }
     }
 }
