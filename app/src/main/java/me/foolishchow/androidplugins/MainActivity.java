@@ -25,6 +25,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivityJumper.parse(this);
         //Class<MainActivity$ShadowLifeCycleDelegate> classes =
         //        MainActivity$ShadowLifeCycleDelegate.class;
         mKernalViewBinding.mNavTitle.setText("sdasdasdasd");
@@ -34,7 +35,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     @InstanceState()
-    public Integer name;
+    Integer name;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {

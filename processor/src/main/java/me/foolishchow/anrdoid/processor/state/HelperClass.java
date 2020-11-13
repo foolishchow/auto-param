@@ -1,4 +1,4 @@
-package me.foolishchow.anrdoid.processor;
+package me.foolishchow.anrdoid.processor.state;
 
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.ClassName;
@@ -20,16 +20,20 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
+import me.foolishchow.anrdoid.processor.HelperConfig;
+import me.foolishchow.anrdoid.processor.HelperSavedValues;
+import me.foolishchow.anrdoid.processor.TypeUtil;
+
 
 public class HelperClass {
-    private TypeElement encloseElement;
-    private Elements elementUtils;
+    private TypeElement mEncloseElement;
+    private Elements mElements;
     private ArrayList<HelperSavedValues> elementArrayList;
     private Messager messager;
 
-    public HelperClass(TypeElement encloseElement, Elements elementUtils, Messager messager) {
-        this.encloseElement = encloseElement;
-        this.elementUtils = elementUtils;
+    public HelperClass(TypeElement encloseElement, Elements mElements, Messager messager) {
+        this.mEncloseElement = encloseElement;
+        this.mElements = mElements;
         elementArrayList = new ArrayList<>();
         this.messager = messager;
     }
@@ -61,7 +65,7 @@ public class HelperClass {
     public JavaFile generateCode() {
         try {
             //当前所在的class
-            TypeName cacheClass = ClassName.get(encloseElement.asType());
+            TypeName cacheClass = ClassName.get(mEncloseElement.asType());
 
             //设置方法名
             MethodSpec.Builder saveStateMethod = createMethod(
@@ -101,7 +105,7 @@ public class HelperClass {
                 }
                 Name fieldName = value.getSimpleName();//字段名称
                 TypeMirror typeMirror = value.getFieldType();//字段类型
-                String type = HelperConfig.getBundleFieldType(elementUtils, typeMirror);//获取类型的名称
+                String type = HelperConfig.getBundleFieldType(mElements, typeMirror);//获取类型的名称
                 efficientElement++;
                 if (!type.equals(HelperConfig.UNKONW)) {
                     if (type.equals("Serializable") || type.equals("ParcelableArray")) {
@@ -123,7 +127,7 @@ public class HelperClass {
                 for (HelperSavedValues value : persistentArrayList) {
                     Name fieldName = value.getSimpleName();
                     TypeMirror typeMirror = value.getFieldType();
-                    String type = HelperConfig.getPersistableBundleFieldType(elementUtils, typeMirror);
+                    String type = HelperConfig.getPersistableBundleFieldType(mElements, typeMirror);
                     efficientElement++;
                     if (!type.equals(HelperConfig.UNKONW)) {
                         if (type.equals("Serializable") || type.equals("ParcelableArray")) {
@@ -149,7 +153,7 @@ public class HelperClass {
             MethodSpec saveMethod = saveStateMethod.build();
             //创建recover方法的MethodSpec对象
             MethodSpec recoverMethod = restoreStateMethod.build();
-            String className = encloseElement.getSimpleName().toString() + HelperConfig.HELP_CLASS;
+            String className = mEncloseElement.getSimpleName().toString() + HelperConfig.HELP_CLASS;
             TypeSpec cacheClassTypeSpec = TypeSpec.classBuilder(className)
                     .addModifiers(Modifier.PUBLIC)//增加class的修饰字段
                     .addSuperinterface(ParameterizedTypeName.get(TypeUtil.IHELPER, cacheClass))//class实现了一个范型接口
@@ -167,11 +171,11 @@ public class HelperClass {
 
 
     private String getPackageName() {
-        return elementUtils.getPackageOf(encloseElement).getQualifiedName().toString();
+        return mElements.getPackageOf(mEncloseElement).getQualifiedName().toString();
     }
 
     private String getCacheClassName() {
-        return encloseElement.getSimpleName().toString() + "_Cache";
+        return mEncloseElement.getSimpleName().toString() + "_Cache";
     }
 
     private String upperFirstWord(String str) {

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +13,22 @@ import me.foolishchow.android.annotation.IntentParam;
 
 public class UserActivity extends AppCompatActivity {
 
+    public static class UserInfo implements Serializable {
+
+    }
+
     @InstanceState(persist = true)
     @IntentParam
     String mIsString;
 
+    @IntentParam
+    protected int mIsInt;
 
     @IntentParam
-    int mIsInt;
+    Integer mIsInteger;
 
+    @IntentParam
+    UserInfo mIsBean;
 
     @IntentParam
     HashMap<String,String> mIsMap;
@@ -29,5 +38,9 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+        UserActivityJumper.with(this)
+                .IsInt(1)
+                .build();
     }
 }

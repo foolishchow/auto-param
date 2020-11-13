@@ -2,14 +2,10 @@ package me.foolishchow.anrdoid.processor;
 
 import me.foolishchow.android.annotation.InstanceState;
 import me.foolishchow.android.annotation.IntentParam;
-import me.foolishchow.anrdoid.processor.activity.TypeMap;
+import me.foolishchow.anrdoid.processor.activity.IntentParamProcessor;
+import me.foolishchow.anrdoid.processor.state.HelperClass;
+import me.foolishchow.anrdoid.processor.state.InstantStateProcessor;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,11 +18,8 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic;
 
 public class Processor extends AbstractProcessor {
 
@@ -54,8 +47,8 @@ public class Processor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         System.out.println("=============process");
-        Map<String, HelperClass> mHelperClassMap = new HashMap<>();
-        Map<String, TypeMap> mTypeMap = new HashMap<>();
+        Map<String, InstantStateProcessor> mInstantStateMap = new HashMap<>();
+        Map<String, IntentParamProcessor> mIntentParamMap = new HashMap<>();
         /*
          * 1- Find all annotated element
          */
@@ -64,42 +57,54 @@ public class Processor extends AbstractProcessor {
             TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
             //所在类的完整类名
             String fullClassName = encloseElement.getQualifiedName().toString();
-            TypeMap typeMap = mTypeMap.get(fullClassName);
-            if(typeMap == null){
-                typeMap = new TypeMap(encloseElement);
-                mTypeMap.put(fullClassName,typeMap);
+            IntentParamProcessor processor = mIntentParamMap.get(fullClassName);
+            if(processor == null){
+                processor = new IntentParamProcessor(messager,encloseElement);
+                mIntentParamMap.put(fullClassName, processor);
             }
-            typeMap.addElement(element);
+            processor.addElement(element);
         }
 
-        for(TypeMap typeMap : mTypeMap.values()){
-            typeMap.generate(filer,elementUtils);
+        for(IntentParamProcessor processor : mIntentParamMap.values()){
+            processor.generate(filer,elementUtils);
         }
 
         for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceState.class)) {
-            getHelperClass(mHelperClassMap,element);
+            TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
+            //所在类的完整类名
+            String fullClassName = encloseElement.getQualifiedName().toString();
+            //通过所在类的类名获取HelperClass类，HelperClass是用于自动生成代码的对象
+            InstantStateProcessor processor = mInstantStateMap.get(fullClassName);
+            if (processor == null) {
+                processor = new InstantStateProcessor(messager,encloseElement);
+                mInstantStateMap.put(fullClassName, processor);
+            }
+            processor.addField(element);
         }
 
+        for(InstantStateProcessor processor : mInstantStateMap.values()){
+            processor.generate(filer,elementUtils);
+        }
 
         //遍历生成java代码
-        for(HelperClass helperClass : mHelperClassMap.values()){
-            try {
-
-                //获取helperClass，调用其方法直接生成java代码
-                JavaFile javaFile = helperClass.generateCode();
-                if(javaFile != null){
-                    javaFile.writeTo(filer);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        //for(HelperClass helperClass : mInstantStateMap.values()){
+        //    try {
+        //
+        //        //获取helperClass，调用其方法直接生成java代码
+        //        JavaFile javaFile = helperClass.generateCode();
+        //        if(javaFile != null){
+        //            javaFile.writeTo(filer);
+        //        }
+        //    } catch (IOException e) {
+        //        e.printStackTrace();
+        //    }
+        //}
 
         return true;
     }
 
 
-    private HelperClass getHelperClass(Map<String, HelperClass> mHelperClassMap,Element element) {
+    private void getHelperClass(Map<String, HelperClass> mHelperClassMap, Element element) {
         TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
         //所在类的完整类名
         String fullClassName = encloseElement.getQualifiedName().toString();
@@ -113,7 +118,6 @@ public class Processor extends AbstractProcessor {
         //也就是map的key为需要生成的类，value为生成这个类的方法对象，其中包括了所有的需要保存的元素
         HelperSavedValues values = new HelperSavedValues(element);
         annotatedClass.addField(values);//添加当前类中的 所被注解标记的元素
-        return annotatedClass;
     }
 
     @Override
