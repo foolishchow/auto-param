@@ -85,9 +85,9 @@ public abstract class BaseAnnotationProcessor {
             TypeSpec.Builder builder,
             String packageName,
             String originClassName,
-            TypeName originClassType,
+            ClassName originClassType,
             String targetClassName,
-            TypeName targetClassType
+            ClassName targetClassType
     );
 
 

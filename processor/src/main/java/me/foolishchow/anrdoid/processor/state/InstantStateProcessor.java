@@ -2,30 +2,25 @@ package me.foolishchow.anrdoid.processor.state;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 import me.foolishchow.android.annotation.Constant;
 import me.foolishchow.android.annotation.InstanceState;
 import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;
-import me.foolishchow.anrdoid.processor.base.TypeNames;
+import me.foolishchow.anrdoid.processor.intent.TypeNames;
 
 
 public class InstantStateProcessor extends BaseAnnotationProcessor {
@@ -81,9 +76,9 @@ public class InstantStateProcessor extends BaseAnnotationProcessor {
                         TypeSpec.Builder builder,
                         String packageName,
                         String originClassName,
-                        TypeName originClassType,
+                        ClassName originClassType,
                         String targetClassName,
-                        TypeName targetClassType
+                        ClassName targetClassType
     ) {
         builder.addSuperinterface(getInterfaceType(originClassType));
         MethodSpec.Builder saveMethod = MethodSpec
@@ -111,7 +106,7 @@ public class InstantStateProcessor extends BaseAnnotationProcessor {
             for (Element element : mCommonElements) {
                 String fieldName = element.getSimpleName().toString();
                 FieldSpec.Builder field = FieldSpec.builder(
-                        TypeNames.String,
+                        TypeNames.STRING,
                         camel2snake(fieldName),
                         Modifier.PRIVATE, Modifier.FINAL
                 );
@@ -126,7 +121,7 @@ public class InstantStateProcessor extends BaseAnnotationProcessor {
             for (Element element : mPersistElement) {
                 String fieldName = element.getSimpleName().toString();
                 FieldSpec.Builder field = FieldSpec.builder(
-                        TypeNames.String,
+                        TypeNames.STRING,
                         camel2snake(fieldName),
                         Modifier.PRIVATE, Modifier.FINAL
                 );
