@@ -1,5 +1,8 @@
 package me.foolishchow.anrdoid.processor.intent;
 
+import com.squareup.javapoet.ArrayTypeName;
+import com.squareup.javapoet.TypeName;
+
 /**
  * Description: <br/>
  * Author: foolishchow <br/>
@@ -8,4 +11,26 @@ package me.foolishchow.anrdoid.processor.intent;
 public class IntentTypeUtils {
 
 
+    public static boolean isSimpleExtra(TypeName typeName) {
+        if(typeName.isPrimitive()) return true;
+        if(typeName.isBoxedPrimitive()) return true;
+        return false;
+    }
+
+    public static boolean isArrayExtra(TypeName typeName) {
+        if(typeName instanceof ArrayTypeName){
+            ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+            if(arrayTypeName.componentType.isBoxedPrimitive() || arrayTypeName.componentType.isPrimitive()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static boolean isSeriable(TypeName typeName) {
+        if(typeName.isPrimitive()) return true;
+        if(typeName.isBoxedPrimitive()) return true;
+        return false;
+    }
 }

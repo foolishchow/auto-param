@@ -122,18 +122,13 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
                     .returns(targetClassType)
                     .addParameter(typeName, "param");
 
-            if (typeName.isPrimitive() || typeName.isBoxedPrimitive()) {
-                method.addStatement(format("mIntent.putExtra(%s,param)", camel2snake(fieldName)));
-            } else {
-                if (typeName instanceof ArrayTypeName) {
-                    ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
-                    if (
-                            arrayTypeName.componentType.isPrimitive()
-                                    || arrayTypeName.componentType.isBoxedPrimitive()
-                    ) {
-                        method.addStatement(format("mIntent.putExtra(%s,param)", camel2snake(fieldName)));
-                    }
-                }
+
+            if (IntentTypeUtils.isSimpleExtra(typeName)) {
+                method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
+            } else if (IntentTypeUtils.isArrayExtra(typeName)) {
+                method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
+            } else if(IntentTypeUtils.isArrayExtra(typeName)){
+                method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
             }
 
             method.addStatement("return this");
