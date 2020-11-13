@@ -28,7 +28,22 @@ public class UserActivity extends AppCompatActivity {
     Integer mIsInteger;
 
     @IntentParam
+    int[] mIsIntArray;
+
+    @IntentParam
+    Integer[] mIsIntegerArray;
+
+
+    @IntentParam
+    long[] mIslongArray;
+
+    @IntentParam
+    Long[] mIsLongArray;
+
+    @IntentParam
     UserInfo mIsBean;
+
+
 
     @IntentParam
     HashMap<String,String> mIsMap;

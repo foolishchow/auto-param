@@ -1,23 +1,16 @@
-package me.foolishchow.anrdoid.processor.activity;
+package me.foolishchow.anrdoid.processor.intent;
 
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
@@ -26,6 +19,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 import me.foolishchow.android.annotation.Constant;
+import me.foolishchow.anrdoid.processor.TypeUtil;
 import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;
 import me.foolishchow.anrdoid.processor.base.TypeNames;
 
@@ -57,6 +51,7 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
                 element.getSimpleName().toString(),
                 element.asType().toString()
         ));
+
         mElements.add(element);
     }
 
@@ -83,7 +78,15 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
                 .addParameter(originClassType, "activity");
-        builder.addMethod(parse.build());
+        parse.beginControlFlow("if(activity == null || activity.isFinishing() || activity" +
+                ".isDestroyed())")
+                .addStatement("return")
+                .endControlFlow();
+        parse.addStatement("$T intent = activity.getIntent();", TypeNames.INTENT);
+        parse.beginControlFlow("if(intent == null)")
+                .addStatement("return")
+                .endControlFlow();
+
 
         MethodSpec.Builder withContext = MethodSpec
                 .methodBuilder("with")
@@ -98,27 +101,55 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
 
 
         for (Element element : mElements) {
+
             String fieldName = element.getSimpleName().toString();
+            String keyName = camel2snake(fieldName);
             FieldSpec.Builder field = FieldSpec.builder(
                     TypeNames.String,
-                    camel2snake(fieldName),
-                    Modifier.PRIVATE, Modifier.FINAL
+                    keyName,
+                    Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC
             );
-
             field.initializer(wrapString(escapeString(fieldName)));
             builder.addField(field.build());
 
             TypeMirror typeMirror = element.asType();
+            TypeName typeName = TypeName.get(typeMirror);
+
+
             MethodSpec.Builder method = MethodSpec
                     .methodBuilder(getSetMethodName(fieldName))
                     .addModifiers(Modifier.PUBLIC)
                     .returns(targetClassType)
-                    .addParameter(TypeName.get(typeMirror), "param")
-                    .addStatement(format("mIntent.putExtra(%s,param)", camel2snake(fieldName)))
-                    .addStatement("return this");
+                    .addParameter(typeName, "param");
 
+            if (typeName.isPrimitive() || typeName.isBoxedPrimitive()) {
+                method.addStatement(format("mIntent.putExtra(%s,param)", camel2snake(fieldName)));
+            } else {
+                if (typeName instanceof ArrayTypeName) {
+                    ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+                    if (
+                            arrayTypeName.componentType.isPrimitive()
+                                    || arrayTypeName.componentType.isBoxedPrimitive()
+                    ) {
+                        method.addStatement(format("mIntent.putExtra(%s,param)", camel2snake(fieldName)));
+                    }
+                }
+            }
+
+            method.addStatement("return this");
+
+
+            //parse.addStatement(
+            //        format(
+            //                "activity.%s = intent.getIntExtra(%s,-1)",
+            //                fieldName, keyName));
             builder.addMethod(method.build());
+
+
+            //typeName.isPrimitive()
         }
+
+        builder.addMethod(parse.build());
 
     }
 

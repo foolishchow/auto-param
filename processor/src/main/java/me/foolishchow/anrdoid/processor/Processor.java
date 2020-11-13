@@ -2,7 +2,7 @@ package me.foolishchow.anrdoid.processor;
 
 import me.foolishchow.android.annotation.InstanceState;
 import me.foolishchow.android.annotation.IntentParam;
-import me.foolishchow.anrdoid.processor.activity.IntentParamProcessor;
+import me.foolishchow.anrdoid.processor.intent.IntentParamProcessor;
 import me.foolishchow.anrdoid.processor.state.HelperClass;
 import me.foolishchow.anrdoid.processor.state.InstantStateProcessor;
 
