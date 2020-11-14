@@ -74,8 +74,8 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
                 ".isDestroyed())")
                 .addStatement("return")
                 .endControlFlow();
-        parse.addStatement("$T intent = activity.getIntent();", TypeNames.INTENT);
-        parse.beginControlFlow("if(intent == null)")
+        parse.addStatement("$T intent = activity.getIntent()", TypeNames.INTENT);
+        parse.beginControlFlow("if (intent == null)")
                 .addStatement("return")
                 .endControlFlow();
 
@@ -96,22 +96,16 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
 
             String fieldName = element.getSimpleName().toString();
             String keyName = camel2snake(fieldName);
-            FieldSpec.Builder field = FieldSpec.builder(
-                    TypeNames.STRING,
-                    keyName,
-                    Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC
-            );
-            field.initializer(wrapString(escapeString(fieldName)));
-            builder.addField(field.build());
+            addFieldKey(builder, fieldName, keyName);
 
             TypeMirror typeMirror = element.asType();
             TypeName typeName = ParameterizedTypeName.get(typeMirror);
 
-            System.out.println(String.format(
-                    "addElement=>name=%s,type=%s",
-                    element.getSimpleName().toString(),
-                    typeName.toString()
-            ));
+            //System.out.println(String.format(
+            //        "addElement=>name=%s,type=%s",
+            //        element.getSimpleName().toString(),
+            //        typeName.toString()
+            //));
 
             MethodSpec.Builder method = MethodSpec
                     .methodBuilder(getSetMethodName(fieldName))
@@ -119,65 +113,47 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
                     .returns(targetClassType)
                     .addParameter(typeName, "param");
 
-            if (IntentTypeUtils.isStringArrayList(typeName)) {
-                method.addStatement("mIntent.putStringArrayListExtra(" + keyName + ",new $T<$T>" +
-                        "(param))", TypeNames.ARRAY_LIST, TypeNames.STRING);
-            } else if (IntentTypeUtils.isCharSequenceArrayList(typeName)) {
-                method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>" +
-                        "(param))", TypeNames.ARRAY_LIST, TypeNames.CharSequence);
-            } else if (IntentTypeUtils.isIntegerArrayList(typeName)) {
-                method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>" +
-                        "(param))", TypeNames.ARRAY_LIST, TypeNames.INTEGER);
-            } else if (IntentTypeUtils.isParcelableArrayList(elements, typeName)) {
-                method.addStatement("mIntent.putParcelableArrayListExtra(" + keyName + ",new " +
-                        "$T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.PARCELABLE);
-            } else if (IntentTypeUtils.isList(typeName)) {
-                method.addStatement("mIntent.putExtra(" + keyName + ",new " +
-                        "$T(param))", TypeNames.ARRAY_LIST);
-            } else if (IntentTypeUtils.isMap(typeName)) {
-                method.addStatement("mIntent.putExtra(" + keyName + ",new " +
-                        "$T(param))", TypeNames.HASH_MAP);
-            } else if (IntentTypeUtils.isSet(typeName)) {
-                method.addStatement("mIntent.putExtra(" + keyName + ",new " +
-                        "$T(param))", TypeNames.HASH_SET);
-            } else {
-                method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
-            }
-
-
-            //
-            //if (IntentTypeUtils.isPrimitive(typeName) ||
-            //        IntentTypeUtils.isBoxedPrimitive(typeName) ||
-            //        IntentTypeUtils.isPrimitiveArray(typeName) ||
-            //        IntentTypeUtils.isBoxedPrimitiveArray(typeName) ||
-            //        IntentTypeUtils.isString(typeName) ||
-            //        IntentTypeUtils.isStringArray(typeName)
-            //) {
-            //    method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
-            //} else
-            //if (IntentTypeUtils.isPrimitive(typeName)) {
-            //    method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
-            //} else if (IntentTypeUtils.isPrimitiveArray(typeName)) {
-            //    method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
-            //} else if (IntentTypeUtils.isPrimitiveArray(typeName)) {
-            //    method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
-            //}
-
+            //method.addComment(format("field %s type %s ", fieldName, typeName.toString()));
+            addParamStatement(elements, keyName, typeName, method);
             method.addStatement("return this");
-
-
-            //parse.addStatement(
-            //        format(
-            //                "activity.%s = intent.getIntExtra(%s,-1)",
-            //                fieldName, keyName));
             builder.addMethod(method.build());
 
             addParse(parse, elements, element, fieldName, keyName, typeName);
-            //typeName.isPrimitive()
+
         }
 
         builder.addMethod(parse.build());
 
+    }
+
+    private void addFieldKey(TypeSpec.Builder builder, String fieldName, String keyName) {
+        FieldSpec.Builder field = FieldSpec.builder(
+                TypeNames.STRING,
+                keyName,
+                Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC
+        );
+        field.initializer(wrapString(escapeString(fieldName)));
+        builder.addField(field.build());
+    }
+
+    private void addParamStatement(Elements elements, String keyName, TypeName typeName, MethodSpec.Builder method) {
+        if (IntentTypeUtils.isStringArrayList(typeName)) {
+            method.addStatement("mIntent.putStringArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.STRING);
+        } else if (IntentTypeUtils.isCharSequenceArrayList(elements,typeName)) {
+            method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.CharSequence);
+        } else if (IntentTypeUtils.isIntegerArrayList(typeName)) {
+            method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.INTEGER);
+        } else if (IntentTypeUtils.isParcelableArrayList(elements, typeName)) {
+            method.addStatement("mIntent.putParcelableArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.PARCELABLE);
+        } else if (IntentTypeUtils.isList(typeName)) {
+            method.addStatement("mIntent.putExtra(" + keyName + ",new $T(param))", TypeNames.ARRAY_LIST);
+        } else if (IntentTypeUtils.isMap(typeName)) {
+            method.addStatement("mIntent.putExtra(" + keyName + ",new $T(param))", TypeNames.HASH_MAP);
+        } else if (IntentTypeUtils.isSet(typeName)) {
+            method.addStatement("mIntent.putExtra(" + keyName + ",new $T(param))", TypeNames.HASH_SET);
+        } else {
+            method.addStatement(format("mIntent.putExtra(%s,param)", keyName));
+        }
     }
 
 
@@ -189,25 +165,66 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
             String keyName,
             TypeName typeName
     ) {
-        String preffix = format("activity.%s = intent",fieldName);
-        parse.beginControlFlow(format("if(intent.hasExtra(%s))", keyName));
+        //parse.addComment(format("field %s type %s ", fieldName, typeName.toString()));
+        String preffix = format("activity.%s", fieldName);
+        parse.beginControlFlow(format("if (intent.hasExtra(%s))", keyName));
+
         if (IntentTypeUtils.isInt(typeName) || IntentTypeUtils.isBoxedInt(typeName)) {
-            parse.addStatement(format("%s.getIntExtra(%s,-1)", preffix,
-                    keyName));
-        } else if (IntentTypeUtils.isByte(typeName) || IntentTypeUtils.isBoxedByte(typeName)) {
-            parse.addStatement(format("%s.getByteExtra(%s,$T.MIN_VALUE)",
-                    preffix,
-                    keyName), Byte.class);
+            parse.addStatement(format("%s = intent.getIntExtra(%s,$T.MIN_VALUE)", preffix, keyName), Integer.class);
+        } else if (IntentTypeUtils.isIntArray(typeName)) {
+            parse.addStatement(format("%s = intent.getIntArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isIntegerArrayList(typeName)) {
+            parse.addStatement(format("%s = intent.getIntegerArrayListExtra(%s)", preffix, keyName));
+        }else if (IntentTypeUtils.isByte(typeName) || IntentTypeUtils.isBoxedByte(typeName)) {
+            parse.addStatement(format("%s = intent.getByteExtra(%s,$T.MIN_VALUE)", preffix, keyName), Byte.class);
+        } else if (IntentTypeUtils.isByteArray(typeName)) {
+            parse.addStatement(format("%s = intent.getByteArrayExtra(%s)", preffix, keyName));
         } else if (IntentTypeUtils.isBoolean(typeName) || IntentTypeUtils.isBoxedBoolean(typeName)) {
-            parse.addStatement(format("%s.getBooleanExtra(%s,false)",
-                    preffix, keyName));
-        }else if (IntentTypeUtils.isLong(typeName) || IntentTypeUtils.isBoxedLong(typeName)) {
-            parse.addStatement(format("%s.getLongExtra(%s,1L)",
-                    preffix, keyName));
-        }else if (IntentTypeUtils.isFloat(typeName) || IntentTypeUtils.isBoxedFloat(typeName)) {
-            parse.addStatement(format("%s.getBooleanExtra(%s,-1f)",
-                    preffix, keyName));
+            parse.addStatement(format("%s = intent.getBooleanExtra(%s,false)", preffix, keyName));
+        } else if (IntentTypeUtils.isBooleanArray(typeName)) {
+            parse.addStatement(format("%s = intent.getBooleanArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isChar(typeName) || IntentTypeUtils.isBoxedChar(typeName)) {
+            parse.addStatement(format("%s = intent.getCharExtra(%s,$T.MIN_CODE_POINT)", preffix, keyName), Character.class);
+        } else if (IntentTypeUtils.isCharArray(typeName)) {
+            parse.addStatement(format("%s = intent.getCharArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isDouble(typeName) || IntentTypeUtils.isBoxedDouble(typeName)) {
+            parse.addStatement(format("%s = intent.getDoubleExtra(%s,$T.MAX_VALUE)", preffix, keyName), Double.class);
+        } else if (IntentTypeUtils.isDoubleArray(typeName)) {
+            parse.addStatement(format("%s = intent.getDoubleArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isFloat(typeName) || IntentTypeUtils.isBoxedFloat(typeName)) {
+            parse.addStatement(format("%s = intent.getFloatExtra(%s,$T.MIN_VALUE)", preffix, keyName), Float.class);
+        } else if (IntentTypeUtils.isFloatArray(typeName)) {
+            parse.addStatement(format("%s = intent.getFloatArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isLong(typeName) || IntentTypeUtils.isBoxedLong(typeName)) {
+            parse.addStatement(format("%s = intent.getLongExtra(%s,$T.MIN_VALUE)", preffix, keyName), Long.class);
+        } else if (IntentTypeUtils.isLongArray(typeName)) {
+            parse.addStatement(format("%s = intent.getLongArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isShort(typeName) || IntentTypeUtils.isBoxedShort(typeName)) {
+            parse.addStatement(format("%s = intent.getShortExtra(%s,$T.MIN_VALUE)", preffix, keyName), Short.class);
+        } else if (IntentTypeUtils.isShortArray(typeName)) {
+            parse.addStatement(format("%s = intent.getShortArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isString(typeName)) {
+            parse.addStatement(format("%s = intent.getStringExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isStringArray(typeName)) {
+            parse.addStatement(format("%s = intent.getStringArrayExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isStringArrayList(typeName)) {
+            parse.addStatement(format("%s = intent.getStringArrayListExtra(%s)", preffix, keyName));
+        } else if (IntentTypeUtils.isCharSequence(elements, typeName)) {
+            parse.addStatement(format("%s = ($T)intent.getCharSequenceExtra(%s)", preffix, keyName), typeName);
+        } else if (IntentTypeUtils.isCharSequenceArray(elements, typeName)) {
+            parse.addStatement(format("%s = ($T)intent.getCharSequenceArrayExtra(%s)", preffix, keyName), typeName);
+        } else if (IntentTypeUtils.isCharSequenceArrayList(elements,typeName)) {
+            parse.addStatement(format("%s = ($T)intent.getCharSequenceArrayListExtra(%s)", preffix, keyName), typeName);
+        } else if (IntentTypeUtils.isParcelable(elements, typeName)) {
+            parse.addStatement(format("%s = ($T)intent.getParcelableExtra(%s)", preffix, keyName), typeName);
+        }else if (IntentTypeUtils.isParcelableArray(elements, typeName)) {
+            parse.addStatement(format("%s = ($T)intent.getParcelableArrayExtra(%s)", preffix, keyName), typeName);
+        }else if (IntentTypeUtils.isParcelableArrayList(elements, typeName)) {
+            parse.addStatement(format("%s = ($T)intent.getParcelableArrayListExtra(%s)", preffix, keyName), typeName);
+        }else{
+            parse.addStatement(format("%s = ($T)intent.getSerializableExtra(%s)", preffix, keyName), typeName);
         }
+
         parse.endControlFlow();
     }
 

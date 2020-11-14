@@ -15,11 +15,13 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 import me.foolishchow.android.annotation.Constant;
 import me.foolishchow.android.annotation.InstanceState;
 import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;
+import me.foolishchow.anrdoid.processor.intent.IntentTypeUtils;
 import me.foolishchow.anrdoid.processor.intent.TypeNames;
 
 
@@ -58,7 +60,21 @@ public class InstantStateProcessor extends BaseAnnotationProcessor {
             printInfo("the modifier of the field is public, this will expose context info", element);
         }
         if (element.getAnnotation(InstanceState.class).persist()) {
-            mPersistElement.add(element);
+            TypeMirror typeMirror = element.asType();
+            TypeName typeName = ParameterizedTypeName.get(typeMirror);
+            if (
+                    IntentTypeUtils.isString(typeName) ||
+                            IntentTypeUtils.isStringArray(typeName) ||
+                            IntentTypeUtils.isPrimitive(typeName) ||
+                            IntentTypeUtils.isBoxedPrimitive(typeName) ||
+                            IntentTypeUtils.isPrimitiveArray(typeName) ||
+                            IntentTypeUtils.isBoxedPrimitiveArray(typeName)
+            ) {
+                mPersistElement.add(element);
+            } else {
+                printError("persist only can apply to String,Primitive,BoxedPrimitive,StringArray,PrimitiveArray,BoxedPrimitiveArray ",
+                        element);
+            }
         } else {
             mCommonElements.add(element);
         }
@@ -100,44 +116,160 @@ public class InstantStateProcessor extends BaseAnnotationProcessor {
                 .addParameter(PERSISTABLE_BUNDLE, "savedPersistentState")
                 .addParameter(originClassType, "instance");
 
-        if(mCommonElements.size() > 0){
+        if (mCommonElements.size() > 0) {
             restoreMethod.beginControlFlow("if(savedState != null)");
             saveMethod.beginControlFlow("if(outState != null)");
             for (Element element : mCommonElements) {
                 String fieldName = element.getSimpleName().toString();
-                FieldSpec.Builder field = FieldSpec.builder(
-                        TypeNames.STRING,
-                        camel2snake(fieldName),
-                        Modifier.PRIVATE, Modifier.FINAL
-                );
-                field.initializer(wrapString(escapeString(fieldName)));
-                builder.addField(field.build());
+                String fieldKey = camel2snake(fieldName);
+                TypeMirror typeMirror = element.asType();
+                TypeName typeName = ParameterizedTypeName.get(typeMirror);
+                String androidTypeName = getTypeName(elements, typeName);
+
+
+                createFieldKey(builder, fieldName, fieldKey);
+                restoreMethod.beginControlFlow(format("if (savedState.containsKey(%s))",fieldKey));
+                if (typeName.isPrimitive()) {
+                    restoreMethod.addStatement(format("instance.%s = savedState.get%s(%s)", fieldName,androidTypeName, fieldKey));
+                    saveMethod.addStatement(format("outState.put%s(%s,instance.%s)", androidTypeName, fieldKey, fieldName));
+                } else {
+                    saveMethod.beginControlFlow(format("if (instance.%s != null)", fieldName))
+                            .addStatement(format("outState.put%s(%s,instance.%s)", androidTypeName, fieldKey, fieldName))
+                            .endControlFlow();
+                    restoreMethod.addStatement(format("instance.%s = ($T)savedState.get%s(%s)", fieldName,androidTypeName, fieldKey),
+                            typeName);
+                }
+                restoreMethod.endControlFlow();
+
+
 
             }
             restoreMethod.endControlFlow();
             saveMethod.endControlFlow();
         }
-        if(mPersistElement.size() > 0){
+        if (mPersistElement.size() > 0) {
+            restoreMethod.beginControlFlow("if(savedPersistentState != null)");
+            saveMethod.beginControlFlow("if(outPersistentState != null)");
             for (Element element : mPersistElement) {
                 String fieldName = element.getSimpleName().toString();
-                FieldSpec.Builder field = FieldSpec.builder(
-                        TypeNames.STRING,
-                        camel2snake(fieldName),
-                        Modifier.PRIVATE, Modifier.FINAL
-                );
+                String fieldKey = camel2snake(fieldName);
+                TypeMirror typeMirror = element.asType();
+                TypeName typeName = ParameterizedTypeName.get(typeMirror);
+                String androidTypeName = getTypeName(elements, typeName);
 
-                String name = escapeString(fieldName);
-                field.initializer(wrapString(name));
-                builder.addField(field.build());
-
+                createFieldKey(builder, fieldName, fieldKey);
+                restoreMethod.beginControlFlow(format("if (savedPersistentState.containsKey(%s))",fieldKey));
+                if (typeName.isPrimitive()) {
+                    saveMethod.addStatement(format("outPersistentState.put%s(%s,instance.%s)", androidTypeName, fieldKey, fieldName));
+                } else {
+                    saveMethod.beginControlFlow(format("if (instance.%s != null)", fieldName))
+                            .addStatement(format("outPersistentState.put%s(%s,instance.%s)", androidTypeName, fieldKey, fieldName))
+                            .endControlFlow();
+                }
+                restoreMethod.addStatement(format("instance.%s = savedPersistentState.get%s(%s)", fieldName,androidTypeName, fieldKey));
+                restoreMethod.endControlFlow();
             }
+            restoreMethod.endControlFlow();
+            saveMethod.endControlFlow();
         }
 
 
         builder.addMethod(saveMethod.build());
         builder.addMethod(restoreMethod.build());
+    }
 
 
+    private String getTypeName(Elements elements, TypeName typeName) {
+
+        if (IntentTypeUtils.isByte(typeName) || IntentTypeUtils.isBoxedByte(typeName)) {
+            return "Byte";
+        }
+        if (IntentTypeUtils.isByteArray(typeName)) {
+            return "ByteArray";
+        }
+        if (IntentTypeUtils.isChar(typeName) || IntentTypeUtils.isBoxedChar(typeName)) {
+            return "Char";
+        }
+        if (IntentTypeUtils.isCharArray(typeName)) {
+            return "CharArray";
+        }
+        if (IntentTypeUtils.isDouble(typeName) || IntentTypeUtils.isBoxedDouble(typeName)) {
+            return "Double";
+        }
+        if (IntentTypeUtils.isCharArray(typeName)) {
+            return "DoubleArray";
+        }
+        if (IntentTypeUtils.isFloat(typeName) || IntentTypeUtils.isBoxedFloat(typeName)) {
+            return "Float";
+        }
+        if (IntentTypeUtils.isCharArray(typeName)) {
+            return "FloatArray";
+        }
+        if (IntentTypeUtils.isInt(typeName) || IntentTypeUtils.isBoxedInt(typeName)) {
+            return "Int";
+        }
+        if (IntentTypeUtils.isIntArray(typeName)) {
+            return "IntArray";
+        }
+        if (IntentTypeUtils.isLong(typeName) || IntentTypeUtils.isBoxedLong(typeName)) {
+            return "Long";
+        }
+        if (IntentTypeUtils.isLongArray(typeName)) {
+            return "LongArray";
+        }
+        if (IntentTypeUtils.isShort(typeName) || IntentTypeUtils.isBoxedShort(typeName)) {
+            return "Short";
+        }
+        if (IntentTypeUtils.isShortArray(typeName)) {
+            return "ShortArray";
+        }
+        if (IntentTypeUtils.isString(typeName)) {
+            return "String";
+        }
+        if (IntentTypeUtils.isStringArray(typeName)) {
+            return "StringArray";
+        }
+        if (IntentTypeUtils.isStringArrayList(typeName)) {
+            return "StringArrayList";
+        }
+        if (IntentTypeUtils.isCharSequence(elements, typeName)) {
+            return "CharSequence";
+        }
+        if (IntentTypeUtils.isCharSequenceArray(elements, typeName)) {
+            return "CharSequenceArray";
+        }
+        if (IntentTypeUtils.isCharSequenceArrayList(elements, typeName)) {
+            return "CharSequenceArrayList";
+        }
+        if (IntentTypeUtils.isSize(typeName)) {
+            return "Size";
+        }
+        if (IntentTypeUtils.isSizeF(typeName)) {
+            return "SizeF";
+        }
+        if (IntentTypeUtils.isParcelable(elements, typeName)) {
+            return "Parcelable";
+        }
+        if (IntentTypeUtils.isParcelableArray(elements, typeName)) {
+            return "ParcelableArray";
+        }
+        if (IntentTypeUtils.isParcelableArrayList(elements, typeName)) {
+            return "ParcelableArrayList";
+        }
+        if (IntentTypeUtils.isSerializable(elements, typeName)) {
+            return "Serializable";
+        }
+        return "";
+    }
+
+    private void createFieldKey(TypeSpec.Builder builder, String fieldName, String fieldKey) {
+        FieldSpec.Builder field = FieldSpec.builder(
+                TypeNames.STRING,
+                fieldKey,
+                Modifier.PRIVATE, Modifier.FINAL
+        );
+        field.initializer(wrapString(escapeString(fieldName)));
+        builder.addField(field.build());
     }
 
 

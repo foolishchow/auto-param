@@ -49,7 +49,17 @@ public class IntentTypeUtils {
     public static boolean isBoxedBoolean(TypeName typeName) {
         return typeName.isBoxedPrimitive() && typeName.unbox().equals(TypeName.BOOLEAN);
     }
+    public static boolean isBooleanArray(TypeName typeName) {
+        if (!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isBoolean(arrayTypeName.componentType);
+    }
 
+    public static boolean isBoxedBooleanArray(TypeName typeName) {
+        if (!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isBoxedBoolean(arrayTypeName.componentType);
+    }
 
     public static boolean isByte(TypeName typeName) {
         return typeName.equals(TypeName.BYTE);
@@ -91,6 +101,47 @@ public class IntentTypeUtils {
         return isBoxedChar(arrayTypeName.componentType);
     }
 
+
+    public static boolean isDouble(TypeName typeName) {
+        return typeName.equals(TypeName.DOUBLE);
+    }
+
+    public static boolean isBoxedDouble(TypeName typeName) {
+        return typeName.isBoxedPrimitive() && typeName.unbox().equals(TypeName.DOUBLE);
+    }
+
+
+    public static boolean isDoubleArray(TypeName typeName) {
+        if (!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isDouble(arrayTypeName.componentType);
+    }
+
+    public static boolean isBoxedDoubleArray(TypeName typeName) {
+        if (!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isBoxedDouble(arrayTypeName.componentType);
+    }
+
+    public static boolean isFloat(TypeName typeName) {
+        return typeName.equals(TypeName.FLOAT);
+    }
+
+    public static boolean isBoxedFloat(TypeName typeName) {
+        return typeName.isBoxedPrimitive() && typeName.unbox().equals(TypeName.FLOAT);
+    }
+
+    public static boolean isFloatArray(TypeName typeName) {
+        if (!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isFloat(arrayTypeName.componentType);
+    }
+
+    public static boolean isBoxedFloatArray(TypeName typeName) {
+        if (!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isBoxedFloat(arrayTypeName.componentType);
+    }
     public static boolean isLong(TypeName typeName) {
         return typeName.equals(TypeName.LONG);
     }
@@ -111,25 +162,24 @@ public class IntentTypeUtils {
         return isBoxedLong(arrayTypeName.componentType);
     }
 
-    public static boolean isFloat(TypeName typeName) {
-        return typeName.equals(TypeName.FLOAT);
+
+    public static boolean isShort(TypeName typeName) {
+        return typeName.equals(TypeName.SHORT);
     }
 
-    public static boolean isBoxedFloat(TypeName typeName) {
-        return typeName.isBoxedPrimitive() && typeName.unbox().equals(TypeName.FLOAT);
+    public static boolean isBoxedShort(TypeName typeName) {
+        return typeName.isBoxedPrimitive() && typeName.unbox().equals(TypeName.SHORT);
     }
-
-
-    public static boolean isFloatArray(TypeName typeName) {
+    public static boolean isShortArray(TypeName typeName) {
         if (!isArray(typeName)) return false;
         ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
-        return isFloat(arrayTypeName.componentType);
+        return isShort(arrayTypeName.componentType);
     }
 
-    public static boolean isBoxedFloatArray(TypeName typeName) {
+    public static boolean isBoxedShortArray(TypeName typeName) {
         if (!isArray(typeName)) return false;
         ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
-        return isBoxedFloat(arrayTypeName.componentType);
+        return isBoxedShort(arrayTypeName.componentType);
     }
 
 
@@ -165,6 +215,25 @@ public class IntentTypeUtils {
         return isString(arrayTypeName.componentType);
     }
 
+    public static boolean isCharSequence(Elements elements, TypeName typeName) {
+        if(typeName.equals(TypeNames.CharSequence)){
+            return true;
+        }
+        ClassName className = null;
+        if (typeName instanceof ParameterizedTypeName) {
+            className = ((ParameterizedTypeName) typeName).rawType;
+        } else if (typeName instanceof ClassName) {
+            className = (ClassName) typeName;
+        }
+        if (className == null) return false;
+        return implementInterface(elements,className,TypeNames.CharSequence);
+    }
+
+    public static boolean isCharSequenceArray(Elements elements,TypeName typeName) {
+        if (!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isCharSequence(elements,arrayTypeName.componentType);
+    }
 
     public static boolean isSerializable(Elements elements, TypeName typeName) {
         if(typeName.equals(TypeNames.SERIALIZABLE)){
@@ -177,17 +246,7 @@ public class IntentTypeUtils {
             className = (ClassName) typeName;
         }
         if (className == null) return false;
-        TypeElement typeElement = elements.getTypeElement(className.toString());
-        if (typeElement == null) return false;
-        System.out.println("isSerializable ==== " + className.toString() + "========" + typeName.getClass());
-        List<TypeMirror> interfaces = (List<TypeMirror>) typeElement.getInterfaces();
-        if (interfaces == null || interfaces.size() == 0) return false;
-        for (TypeMirror tm : interfaces) {
-            if (TypeName.get(tm).equals(TypeNames.SERIALIZABLE)) {
-                return true;
-            }
-        }
-        return false;
+        return implementInterface(elements,className,TypeNames.SERIALIZABLE);
     }
 
     public static boolean isParcelable(Elements elements, TypeName typeName) {
@@ -201,13 +260,22 @@ public class IntentTypeUtils {
             className = (ClassName) typeName;
         }
         if (className == null) return false;
+        return implementInterface(elements,className,TypeNames.PARCELABLE);
+    }
+    public static boolean isParcelableArray(Elements elements, TypeName typeName) {
+        if(!isArray(typeName)) return false;
+        ArrayTypeName arrayTypeName = (ArrayTypeName) typeName;
+        return isParcelable(elements,arrayTypeName.componentType);
+    }
+
+
+    public static boolean implementInterface(Elements elements, ClassName className, ClassName interfaceClassName){
         TypeElement typeElement = elements.getTypeElement(className.toString());
         if (typeElement == null) return false;
-        System.out.println("isSerializable ==== " + className.toString() + "========" + typeName.getClass());
         List<TypeMirror> interfaces = (List<TypeMirror>) typeElement.getInterfaces();
         if (interfaces == null || interfaces.size() == 0) return false;
         for (TypeMirror tm : interfaces) {
-            if (TypeName.get(tm).equals(TypeNames.PARCELABLE)) {
+            if (TypeName.get(tm).equals(interfaceClassName)) {
                 return true;
             }
         }
@@ -279,14 +347,14 @@ public class IntentTypeUtils {
         return isBoxedInt(typeArguments.get(0));
     }
 
-    public static boolean isCharSequenceArrayList(TypeName typeName) {
+    public static boolean isCharSequenceArrayList(Elements elements,TypeName typeName) {
         if (!isList(typeName) && !isArrayList(typeName)) {
             return false;
         }
         ParameterizedTypeName typeName1 = (ParameterizedTypeName) typeName;
         List<TypeName> typeArguments = typeName1.typeArguments;
         if(typeArguments.size() != 1) return false;
-        return typeArguments.get(0).equals(TypeNames.CharSequence);
+        return isCharSequence(elements,typeName);
     }
 
 
@@ -300,5 +368,10 @@ public class IntentTypeUtils {
         return isParcelable(elements,typeArguments.get(0));
     }
 
-
+    public static boolean isSize(TypeName typeName) {
+        return typeName.equals(TypeNames.SIZE);
+    }
+    public static boolean isSizeF(TypeName typeName) {
+        return typeName.equals(TypeNames.SIZEF);
+    }
 }

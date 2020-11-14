@@ -20,7 +20,9 @@ public class TypeNames {
     public final static ClassName HASH_MAP = ClassName.get("java.util", "HashMap");
     public final static ClassName LIST = ClassName.get("java.util", "List");
     public final static ClassName ARRAY_LIST = ClassName.get("java.util", "ArrayList");
+    public final static ClassName SIZE = ClassName.get("android.util", "Size");// "android.util.Size";
 
+    public final static ClassName SIZEF = ClassName.get("android.util", "SizeF");//"android.util.SizeF";
 
     public static final ClassName STRING = ClassName.get("java.lang", "String");
 

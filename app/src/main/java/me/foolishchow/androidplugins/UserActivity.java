@@ -19,109 +19,28 @@ import me.foolishchow.android.annotation.IntentParam;
 
 public class UserActivity extends AppCompatActivity {
 
-    public static class UserInfo implements Serializable {
-
-    }
-
-    @IntentParam
-    byte mIsByte;
-
-    @IntentParam
-    Map<String,BigDecimal> map;
-
-    @IntentParam
-    Set<String> set;
-
-
-    @IntentParam
-    List<BigDecimal> BigDecimal;
-    @IntentParam
-    List<Parcelable> pracelables;
-
-    @IntentParam
-    ArrayList<Parcelable> pracelableArrayList;
-
-    @IntentParam
-    List<String> name;
-
-    @IntentParam
-    ArrayList<String> nameList;
-
-
-    @IntentParam
-    List<CharSequence> charSequence;
-
-    @IntentParam
-    ArrayList<CharSequence> charSequenceList;
-
+    @InstanceState(persist = true)
+    String staticUserName;
 
     @InstanceState(persist = true)
-    @IntentParam
-    String mIsString;
+    String[] staticUserNames;
 
-    @IntentParam
-    protected int mIsInt;
+    @InstanceState(persist = true)
+    int staticUserAge;
 
-    @IntentParam
-    Integer mIsInteger;
+    @InstanceState(persist = true)
+    int[] staticUserAges;
 
-    @IntentParam
-    int[] mIsIntArray;
-
-    @IntentParam
-    Integer[] mIsIntegerArray;
-
-
-    @IntentParam
-    long[] mIslongArray;
-
-    @IntentParam
-    Long[] mIsLongArray;
-
-    @IntentParam
-    UserInfo mIsBean;
-
-
-
-    @IntentParam
-    HashMap<String,String> mIsMap;
+    @InstanceState()
+    String userName;
+    @InstanceState
+    Integer name;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-
-        UserActivityJumper.with(this)
-                .IsInt(1)
-                .build();
-
-        Intent intent = new Intent(this, UserActivity.class);
-        //int
-        intent.putExtra("",1);
-        intent.putExtra("",Integer.valueOf(1));
-        intent.getIntExtra("",Integer.MIN_VALUE);
-        //int[]
-        intent.putExtra("",new int[]{1,2});
-        intent.putExtra("",new Integer[]{1,2});
-        int[] intArrayExtra = intent.getIntArrayExtra("");
-        //intent.putCharSequenceArrayListExtra()
-        //intent.put
-
-        intent.putExtra("","");
-        intent.putExtra("",new UserInfo());
-
-
-        intent.getBooleanExtra("",false);
-        intent.getBooleanArrayExtra("");
-
-        intent.getByteExtra("",Byte.MIN_VALUE);
-        intent.getByteArrayExtra("");
-
-
-
-        intent.getBundleExtra("");
-
 
 
     }

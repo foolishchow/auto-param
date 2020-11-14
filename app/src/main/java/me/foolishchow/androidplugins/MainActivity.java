@@ -18,14 +18,10 @@ import me.foolishchow.androidplugins.fake.BaseActivity;
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 
-    @InstanceState(persist = true)
-    @IntentParam
-    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MainActivityJumper.parse(this);
         //Class<MainActivity$ShadowLifeCycleDelegate> classes =
         //        MainActivity$ShadowLifeCycleDelegate.class;
         mKernalViewBinding.mNavTitle.setText("sdasdasdasd");
@@ -33,9 +29,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         //MainActivity$ShadowLifeCycleDelegate mainActivity$ShadowLifeCycleDelegate = new MainActivity$ShadowLifeCycleDelegate();
         //mainActivity$ShadowLifeCycleDelegate.restoreInstanceState();
     }
-
-    @InstanceState()
-    Integer name;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
