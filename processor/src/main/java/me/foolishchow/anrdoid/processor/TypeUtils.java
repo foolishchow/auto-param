@@ -1,4 +1,4 @@
-package me.foolishchow.anrdoid.processor.intent;
+package me.foolishchow.anrdoid.processor;
 
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
@@ -16,7 +16,7 @@ import javax.lang.model.util.Elements;
  * Author: foolishchow <br/>
  * Date: 13/11/2020 1:35 PM <br/>
  */
-public class IntentTypeUtils {
+public class TypeUtils {
 
     public static boolean isArray(TypeName typeName) {
         return typeName instanceof ArrayTypeName;

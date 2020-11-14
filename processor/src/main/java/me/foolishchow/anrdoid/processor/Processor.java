@@ -3,7 +3,6 @@ package me.foolishchow.anrdoid.processor;
 import me.foolishchow.android.annotation.InstanceState;
 import me.foolishchow.android.annotation.IntentParam;
 import me.foolishchow.anrdoid.processor.intent.IntentParamProcessor;
-import me.foolishchow.anrdoid.processor.state.HelperClass;
 import me.foolishchow.anrdoid.processor.state.InstantStateProcessor;
 
 import java.util.HashMap;
@@ -104,21 +103,6 @@ public class Processor extends AbstractProcessor {
     }
 
 
-    private void getHelperClass(Map<String, HelperClass> mHelperClassMap, Element element) {
-        TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
-        //所在类的完整类名
-        String fullClassName = encloseElement.getQualifiedName().toString();
-        //通过所在类的类名获取HelperClass类，HelperClass是用于自动生成代码的对象
-        HelperClass annotatedClass = mHelperClassMap.get(fullClassName);
-        if (annotatedClass == null) {
-            annotatedClass = new HelperClass(encloseElement, elementUtils, messager);
-            mHelperClassMap.put(fullClassName, annotatedClass);
-        }
-        //HelperSavedValues是被@NeedSave标记的字段，然后把这些字段添加到对应的map中
-        //也就是map的key为需要生成的类，value为生成这个类的方法对象，其中包括了所有的需要保存的元素
-        HelperSavedValues values = new HelperSavedValues(element);
-        annotatedClass.addField(values);//添加当前类中的 所被注解标记的元素
-    }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {

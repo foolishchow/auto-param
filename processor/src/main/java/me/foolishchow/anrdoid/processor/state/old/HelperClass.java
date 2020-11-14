@@ -1,4 +1,4 @@
-package me.foolishchow.anrdoid.processor.state;
+package me.foolishchow.anrdoid.processor.state.old;
 
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.ClassName;
@@ -19,10 +19,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
-
-import me.foolishchow.anrdoid.processor.HelperConfig;
-import me.foolishchow.anrdoid.processor.HelperSavedValues;
-import me.foolishchow.anrdoid.processor.TypeUtil;
 
 
 public class HelperClass {

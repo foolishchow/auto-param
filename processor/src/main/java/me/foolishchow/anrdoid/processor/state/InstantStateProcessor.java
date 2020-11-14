@@ -21,8 +21,8 @@ import javax.lang.model.util.Elements;
 import me.foolishchow.android.annotation.Constant;
 import me.foolishchow.android.annotation.InstanceState;
 import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;
-import me.foolishchow.anrdoid.processor.intent.IntentTypeUtils;
-import me.foolishchow.anrdoid.processor.intent.TypeNames;
+import me.foolishchow.anrdoid.processor.TypeUtils;
+import me.foolishchow.anrdoid.processor.TypeNames;
 
 
 public class InstantStateProcessor extends BaseAnnotationProcessor {
@@ -63,12 +63,12 @@ public class InstantStateProcessor extends BaseAnnotationProcessor {
             TypeMirror typeMirror = element.asType();
             TypeName typeName = ParameterizedTypeName.get(typeMirror);
             if (
-                    IntentTypeUtils.isString(typeName) ||
-                            IntentTypeUtils.isStringArray(typeName) ||
-                            IntentTypeUtils.isPrimitive(typeName) ||
-                            IntentTypeUtils.isBoxedPrimitive(typeName) ||
-                            IntentTypeUtils.isPrimitiveArray(typeName) ||
-                            IntentTypeUtils.isBoxedPrimitiveArray(typeName)
+                    TypeUtils.isString(typeName) ||
+                            TypeUtils.isStringArray(typeName) ||
+                            TypeUtils.isPrimitive(typeName) ||
+                            TypeUtils.isBoxedPrimitive(typeName) ||
+                            TypeUtils.isPrimitiveArray(typeName) ||
+                            TypeUtils.isBoxedPrimitiveArray(typeName)
             ) {
                 mPersistElement.add(element);
             } else {
@@ -181,82 +181,82 @@ public class InstantStateProcessor extends BaseAnnotationProcessor {
 
     private String getTypeName(Elements elements, TypeName typeName) {
 
-        if (IntentTypeUtils.isByte(typeName) || IntentTypeUtils.isBoxedByte(typeName)) {
+        if (TypeUtils.isByte(typeName) || TypeUtils.isBoxedByte(typeName)) {
             return "Byte";
         }
-        if (IntentTypeUtils.isByteArray(typeName)) {
+        if (TypeUtils.isByteArray(typeName)) {
             return "ByteArray";
         }
-        if (IntentTypeUtils.isChar(typeName) || IntentTypeUtils.isBoxedChar(typeName)) {
+        if (TypeUtils.isChar(typeName) || TypeUtils.isBoxedChar(typeName)) {
             return "Char";
         }
-        if (IntentTypeUtils.isCharArray(typeName)) {
+        if (TypeUtils.isCharArray(typeName)) {
             return "CharArray";
         }
-        if (IntentTypeUtils.isDouble(typeName) || IntentTypeUtils.isBoxedDouble(typeName)) {
+        if (TypeUtils.isDouble(typeName) || TypeUtils.isBoxedDouble(typeName)) {
             return "Double";
         }
-        if (IntentTypeUtils.isCharArray(typeName)) {
+        if (TypeUtils.isCharArray(typeName)) {
             return "DoubleArray";
         }
-        if (IntentTypeUtils.isFloat(typeName) || IntentTypeUtils.isBoxedFloat(typeName)) {
+        if (TypeUtils.isFloat(typeName) || TypeUtils.isBoxedFloat(typeName)) {
             return "Float";
         }
-        if (IntentTypeUtils.isCharArray(typeName)) {
+        if (TypeUtils.isCharArray(typeName)) {
             return "FloatArray";
         }
-        if (IntentTypeUtils.isInt(typeName) || IntentTypeUtils.isBoxedInt(typeName)) {
+        if (TypeUtils.isInt(typeName) || TypeUtils.isBoxedInt(typeName)) {
             return "Int";
         }
-        if (IntentTypeUtils.isIntArray(typeName)) {
+        if (TypeUtils.isIntArray(typeName)) {
             return "IntArray";
         }
-        if (IntentTypeUtils.isLong(typeName) || IntentTypeUtils.isBoxedLong(typeName)) {
+        if (TypeUtils.isLong(typeName) || TypeUtils.isBoxedLong(typeName)) {
             return "Long";
         }
-        if (IntentTypeUtils.isLongArray(typeName)) {
+        if (TypeUtils.isLongArray(typeName)) {
             return "LongArray";
         }
-        if (IntentTypeUtils.isShort(typeName) || IntentTypeUtils.isBoxedShort(typeName)) {
+        if (TypeUtils.isShort(typeName) || TypeUtils.isBoxedShort(typeName)) {
             return "Short";
         }
-        if (IntentTypeUtils.isShortArray(typeName)) {
+        if (TypeUtils.isShortArray(typeName)) {
             return "ShortArray";
         }
-        if (IntentTypeUtils.isString(typeName)) {
+        if (TypeUtils.isString(typeName)) {
             return "String";
         }
-        if (IntentTypeUtils.isStringArray(typeName)) {
+        if (TypeUtils.isStringArray(typeName)) {
             return "StringArray";
         }
-        if (IntentTypeUtils.isStringArrayList(typeName)) {
+        if (TypeUtils.isStringArrayList(typeName)) {
             return "StringArrayList";
         }
-        if (IntentTypeUtils.isCharSequence(elements, typeName)) {
+        if (TypeUtils.isCharSequence(elements, typeName)) {
             return "CharSequence";
         }
-        if (IntentTypeUtils.isCharSequenceArray(elements, typeName)) {
+        if (TypeUtils.isCharSequenceArray(elements, typeName)) {
             return "CharSequenceArray";
         }
-        if (IntentTypeUtils.isCharSequenceArrayList(elements, typeName)) {
+        if (TypeUtils.isCharSequenceArrayList(elements, typeName)) {
             return "CharSequenceArrayList";
         }
-        if (IntentTypeUtils.isSize(typeName)) {
+        if (TypeUtils.isSize(typeName)) {
             return "Size";
         }
-        if (IntentTypeUtils.isSizeF(typeName)) {
+        if (TypeUtils.isSizeF(typeName)) {
             return "SizeF";
         }
-        if (IntentTypeUtils.isParcelable(elements, typeName)) {
+        if (TypeUtils.isParcelable(elements, typeName)) {
             return "Parcelable";
         }
-        if (IntentTypeUtils.isParcelableArray(elements, typeName)) {
+        if (TypeUtils.isParcelableArray(elements, typeName)) {
             return "ParcelableArray";
         }
-        if (IntentTypeUtils.isParcelableArrayList(elements, typeName)) {
+        if (TypeUtils.isParcelableArrayList(elements, typeName)) {
             return "ParcelableArrayList";
         }
-        if (IntentTypeUtils.isSerializable(elements, typeName)) {
+        if (TypeUtils.isSerializable(elements, typeName)) {
             return "Serializable";
         }
         return "";
