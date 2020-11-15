@@ -1,9 +1,9 @@
 package me.foolishchow.android.annotation;
 
 /**
- * Description: <br/>
- * Author: foolishchow <br/>
- * Date: 13/11/2020 10:52 AM <br/>
+ * Description:
+ * Author: foolishchow
+ * Date: 13/11/2020 10:52 AM
  */
 public class Constant {
     public static final String INSTANT_STATE_SUFFIX = "StateHelper";

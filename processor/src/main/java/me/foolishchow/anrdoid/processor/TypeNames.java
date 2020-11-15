@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * Description: <br/>
- * Author: foolishchow <br/>
- * Date: 13/11/2020 1:14 PM <br/>
+ * Description:
+ * Author: foolishchow
+ * Date: 13/11/2020 1:14 PM
  */
 public class TypeNames {
 

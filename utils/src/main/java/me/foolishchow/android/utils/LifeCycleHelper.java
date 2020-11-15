@@ -8,12 +8,12 @@ import java.util.Map;
 
 import me.foolishchow.android.utils.helpers.IInstanceStateHelper;
 
+import static me.foolishchow.android.annotation.Constant.INSTANT_STATE_SUFFIX;
+
 public class LifeCycleHelper {
 	private static Map<String, IInstanceStateHelper<?>> helperCache = new HashMap<>();
 
     //private static Map<String,ISaveViewStateHelper> viewHelperCache = new HashMap<>();
-
-	private final static String HELPER_END = "_SaveStateHelper";
 
     private final static int VIEW_STATE_KEY = -999;
 
@@ -121,7 +121,7 @@ public class LifeCycleHelper {
         IInstanceStateHelper<T> saveInstanceStateHelper = (IInstanceStateHelper<T>) helperCache.get(clazz);
 		if(saveInstanceStateHelper == null){
 			try {
-				Class<?> findClass = Class.forName(clazz + HELPER_END);
+				Class<?> findClass = Class.forName(clazz + INSTANT_STATE_SUFFIX);
 				saveInstanceStateHelper = (IInstanceStateHelper<T>)findClass.newInstance();
 				helperCache.put(clazz,saveInstanceStateHelper);
 			} catch (ClassNotFoundException e) {
