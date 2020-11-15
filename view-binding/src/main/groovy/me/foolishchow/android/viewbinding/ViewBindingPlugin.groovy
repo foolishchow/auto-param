@@ -54,5 +54,8 @@ class ViewBindingPlugin implements Plugin<Project> {
         //task.mustRunAfter()
     }
 
+    private void createTask(){
+
+    }
 
 }
