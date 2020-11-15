@@ -16,3 +16,4 @@ backup/
 .idea
 gradle
 /multi-module/build/
+/view-binding/build/
