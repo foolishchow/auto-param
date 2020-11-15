@@ -5,7 +5,6 @@ import android.content.Context;
 import java.util.zip.Inflater;
 
 import me.foolishchow.androidplugins.R;
-import me.foolishchow.androidplugins.databinding.ActivityMainBinding;
 
 /**
  * Description: <br/>
