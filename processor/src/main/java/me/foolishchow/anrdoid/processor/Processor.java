@@ -45,7 +45,7 @@ public class Processor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        System.out.println("=============process");
+        //System.out.println("=============process");
         Map<String, InstantStateProcessor> mInstantStateMap = new HashMap<>();
         Map<String, IntentParamProcessor> mIntentParamMap = new HashMap<>();
         /*
@@ -114,7 +114,7 @@ public class Processor extends AbstractProcessor {
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_6;
+        return SourceVersion.latestSupported();
     }
 
     @Override

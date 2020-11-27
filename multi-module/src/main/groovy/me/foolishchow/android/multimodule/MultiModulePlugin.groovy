@@ -44,7 +44,7 @@ class MultiModulePlugin implements Plugin<Project> {
         extension.addModuleIncludeListener(new OnModuleIncludeListener() {
             @Override
             void addIncludeModule(String projectName) {
-                println("multi-module  add -->$projectName")
+                //println("multi-module  add -->$projectName")
                 addMicroModuleSourceSet(projectName)
                 //generateAndroidManifest()
             }
