@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 
 /**
- * Description: <br/>
- * Author: foolishchow <br/>
- * Date: 13/11/2020 9:17 AM <br/>
+ * Description:
+ * Author: foolishchow
+ * Date: 13/11/2020 9:17 AM
  */
 public class IntentBuilder{
 

@@ -31,6 +31,7 @@ public class UserActivity extends AppCompatActivity {
     @InstanceState(persist = true)
     int[] staticUserAges;
 
+    @IntentParam
     @InstanceState()
     String userName;
     @InstanceState

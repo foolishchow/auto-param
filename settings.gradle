@@ -1,10 +1,6 @@
-//include ':processor'
-//include ':annotation'
-//include ':utils'
+include ':processor'
+include ':annotation'
+include ':utils'
 //include ':app'
-include ':multi-module'
-//include ':view-binding'
+//include ':multi-module'
 rootProject.name = "android-plugins"
-//if(file('view-binding').exists()) {
-//    includeBuild 'view-binding'
-//}

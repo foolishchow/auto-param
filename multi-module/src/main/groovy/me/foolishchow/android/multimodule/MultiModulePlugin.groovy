@@ -145,7 +145,7 @@ class MultiModulePlugin implements Plugin<Project> {
         }
         //obj.java.srcDir( "src/${microModule}/java")
         //obj.res.srcDir( "src/${microModule}/res")
-
+        obj.name
         obj.java.srcDir(absolutePath + "/${microModule}/src/main/java")
         obj.java.srcDir(absolutePath + "/${microModule}/src/main/kotlin")
         obj.res.srcDir(absolutePath + "/${microModule}/src/main/res")

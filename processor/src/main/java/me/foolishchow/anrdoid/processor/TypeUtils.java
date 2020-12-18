@@ -12,9 +12,9 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 /**
- * Description: <br/>
- * Author: foolishchow <br/>
- * Date: 13/11/2020 1:35 PM <br/>
+ * Description:
+ * Author: foolishchow
+ * Date: 13/11/2020 1:35 PM
  */
 public class TypeUtils {
 

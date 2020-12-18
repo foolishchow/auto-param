@@ -21,9 +21,9 @@ import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
 /**
- * Description: <br/>
- * Author: foolishchow <br/>
- * Date: 13/11/2020 11:12 AM <br/>
+ * Description:
+ * Author: foolishchow
+ * Date: 13/11/2020 11:12 AM
  */
 public abstract class BaseAnnotationProcessor {
     public final Messager mMessager;

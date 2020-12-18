@@ -88,6 +88,7 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
                 .returns(targetClassType)
                 .addParameter(TypeNames.CONTEXT, "context")
                 .addStatement("$T var = new $T()", targetClassType, targetClassType)
+                .addStatement("var.setContext(context)")
                 .addStatement("var.setIntent(new $T(context,$T.class))", TypeNames.INTENT,
                         originClassType)
                 .addStatement("return var");
