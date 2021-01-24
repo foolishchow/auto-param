@@ -23,6 +23,11 @@ public class IntentBuilder{
         return this;
     }
 
+    public IntentBuilder setFlags(int flags){
+        mIntent.setFlags(flags);
+        return this;
+    }
+
     public void build(){
         mContext.startActivity(mIntent);
     }
