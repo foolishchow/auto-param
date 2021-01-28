@@ -34,8 +34,8 @@ ext {
     userOrg = 'foolishchow'
     groupId = 'me.foolishchow.android'
     uploadName = 'android'
-    publishVersion = '0.0.13'
-    desc = "android annotation utils "
+    publishVersion = '0.0.1'
+    desc = "android intent builder"
     website = 'https://github.com/foolishchow/android_plugins.git'
 }
 

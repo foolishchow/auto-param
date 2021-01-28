@@ -35,16 +35,11 @@ public class Processor extends AbstractProcessor {
         super.init(processingEnvironment);
         elementUtils = processingEnvironment.getElementUtils();
         filer = processingEnvironment.getFiler();
-        //filer = processingEnvironment.getFiler();
         messager = processingEnvironment.getMessager();
-        //elements = processingEnvironment.getElementUtils();
-        //activitiesWithPackage = new HashMap<>();
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        //System.out.println("=============process");
-        //Map<String, InstantStateProcessor> mInstantStateMap = new HashMap<>();
         Map<String, IntentParamProcessor> mIntentParamMap = new HashMap<>();
         /*
          * 1- Find all annotated element
@@ -66,36 +61,6 @@ public class Processor extends AbstractProcessor {
             processor.generate(filer,elementUtils);
         }
 
-        //for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceState.class)) {
-        //    TypeElement encloseElement = (TypeElement) element.getEnclosingElement();
-        //    //所在类的完整类名
-        //    String fullClassName = encloseElement.getQualifiedName().toString();
-        //    //通过所在类的类名获取HelperClass类，HelperClass是用于自动生成代码的对象
-        //    InstantStateProcessor processor = mInstantStateMap.get(fullClassName);
-        //    if (processor == null) {
-        //        processor = new InstantStateProcessor(messager,encloseElement);
-        //        mInstantStateMap.put(fullClassName, processor);
-        //    }
-        //    processor.addField(element);
-        //}
-
-        //for(InstantStateProcessor processor : mInstantStateMap.values()){
-        //    processor.generate(filer,elementUtils);
-        //}
-
-        //遍历生成java代码
-        //for(HelperClass helperClass : mInstantStateMap.values()){
-        //    try {
-        //
-        //        //获取helperClass，调用其方法直接生成java代码
-        //        JavaFile javaFile = helperClass.generateCode();
-        //        if(javaFile != null){
-        //            javaFile.writeTo(filer);
-        //        }
-        //    } catch (IOException e) {
-        //        e.printStackTrace();
-        //    }
-        //}
 
         return true;
     }

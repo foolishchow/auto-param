@@ -25,7 +25,7 @@ import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;
 
 public class IntentParamProcessor extends BaseAnnotationProcessor {
 
-    private static ClassName TYPE_PARENT = ClassName.get("me.foolishchow.android.utils",
+    private static ClassName TYPE_PARENT = ClassName.get("me.foolishchow.android.intentBuilder",
             "IntentBuilder");
 
     private ArrayList<Element> mElements = new ArrayList<>();

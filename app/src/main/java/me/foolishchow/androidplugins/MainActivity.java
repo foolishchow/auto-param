@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 
 import me.foolishchow.android.annotation.LayoutId;
-import me.foolishchow.android.utils.LifeCycleHelper;
+import me.foolishchow.android.intentBuilder.LifeCycleHelper;
 
 
 @LayoutId(R.layout.activity_main)

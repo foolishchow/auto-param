@@ -30,7 +30,7 @@ targetCompatibility = "1.7"
 //添加
 publish {
     repoName = rootProject.repoName
-    artifactId = 'processor'
+    artifactId = 'intent-builder-processor'
     userOrg = rootProject.userOrg
     groupId = rootProject.groupId
     //uploadName = rootProject.uploadName

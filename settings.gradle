@@ -1,6 +1,6 @@
 include ':processor'
-include ':annotation'
-include ':utils'
+//include ':annotation'
+include ':library'
 //include ':app'
 //include ':multi-module'
-rootProject.name = "android-plugins"
+rootProject.name = "intent-builder"
