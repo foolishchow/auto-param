@@ -1,6 +1,3 @@
-//include ':processor'
-//include ':annotation'
-include ':library'
-//include ':app'
-//include ':multi-module'
+include ':processor'
+//include ':library'
 rootProject.name = "intent-builder"

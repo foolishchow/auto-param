@@ -18,7 +18,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
-import me.foolishchow.android.annotation.Constant;
 import me.foolishchow.anrdoid.processor.TypeUtils;
 import me.foolishchow.anrdoid.processor.TypeNames;
 import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;

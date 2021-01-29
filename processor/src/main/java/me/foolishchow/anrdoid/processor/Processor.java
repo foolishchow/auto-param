@@ -1,8 +1,6 @@
 package me.foolishchow.anrdoid.processor;
 
-import me.foolishchow.android.annotation.IntentParam;
 import me.foolishchow.anrdoid.processor.intent.IntentParamProcessor;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -70,7 +68,6 @@ public class Processor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         HashSet<String> set = new HashSet<>();
-        //set.add(InstanceState.class.getCanonicalName());
         set.add(IntentParam.class.getCanonicalName());
         return set;
     }
