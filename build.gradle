@@ -34,7 +34,7 @@ ext {
     userOrg = 'foolishchow'
     groupId = 'me.foolishchow.android'
     uploadName = 'android'
-    publishVersion = '0.0.13'
+    publishVersion = '0.0.14'
     desc = "android annotation utils "
     website = 'https://github.com/foolishchow/android_plugins.git'
 }
