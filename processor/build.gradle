@@ -3,9 +3,10 @@ apply plugin: 'java-library'
 apply plugin: 'bintray-release'
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     //implementation project(':annotation')
-    implementation 'me.foolishchow.android:annotation:0.0.8'
+    //noinspection GradleDependency
+    api 'me.foolishchow.android:annotation:0.0.14'
+    //noinspection GradleDependency
     implementation 'com.squareup:javapoet:1.11.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     //implementation 'com.google.auto.service:auto-service:1.0-rc5'

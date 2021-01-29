@@ -3,6 +3,9 @@ package me.foolishchow.android.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 
 /**
  * Description:
@@ -12,7 +15,7 @@ import android.content.Intent;
 public class IntentBuilder {
 
     private Context mContext;
-    private Intent mIntent;
+    protected Intent mIntent;
 
     public IntentBuilder setIntent(Intent intent) {
         mIntent = intent;
@@ -37,12 +40,12 @@ public class IntentBuilder {
         mContext.startActivity(mIntent);
     }
 
+    public void start(@Nullable Bundle options) {
+        mContext.startActivity(mIntent,options);
+    }
+
     public void start(int requestCode) {
         ((Activity) mContext).startActivityForResult(mIntent, requestCode);
     }
 
-    @Deprecated
-    public void build() {
-        mContext.startActivity(mIntent);
-    }
 }
