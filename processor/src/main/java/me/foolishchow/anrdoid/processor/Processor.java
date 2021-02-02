@@ -3,6 +3,7 @@ package me.foolishchow.anrdoid.processor;
 import me.foolishchow.android.annotation.IntentParam;
 import me.foolishchow.anrdoid.processor.intent.IntentParamProcessor;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -115,10 +116,10 @@ public class Processor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
-    @Override
-    public Set<String> getSupportedOptions() {
-        return super.getSupportedOptions();
-    }
+    //@Override
+    //public Set<String> getSupportedOptions() {
+    //    return super.getSupportedOptions();
+    //}
 
     private void print(String template, Object... args){
         if(args.length == 0){
@@ -126,5 +127,10 @@ public class Processor extends AbstractProcessor {
         }else{
             System.out.println(String.format(template,args));
         }
+    }
+
+    @Override
+    public Set<String> getSupportedOptions() {
+        return Collections.singleton("org.gradle.annotation.processing.aggregating");
     }
 }

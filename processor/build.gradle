@@ -5,7 +5,7 @@ apply plugin: 'bintray-release'
 dependencies {
     //implementation project(':annotation')
     //noinspection GradleDependency
-    api 'me.foolishchow.android:annotation:0.0.14'
+    api 'me.foolishchow.android:annotation:0.0.19'
     //noinspection GradleDependency
     implementation 'com.squareup:javapoet:1.11.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'

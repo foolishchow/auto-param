@@ -32,7 +32,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //noinspection GradleDependency
-    api 'me.foolishchow.android:annotation:0.0.14'
+    api 'me.foolishchow.android:annotation:0.0.19'
 }
 
 

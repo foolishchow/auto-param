@@ -1,5 +1,5 @@
 include ':processor'
-include ':annotation'
+//include ':annotation'
 include ':utils'
 //include ':app'
 //include ':multi-module'

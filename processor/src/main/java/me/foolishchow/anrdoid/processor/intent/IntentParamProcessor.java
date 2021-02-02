@@ -19,6 +19,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 import me.foolishchow.android.annotation.Constant;
+import me.foolishchow.android.annotation.IntentParam;
 import me.foolishchow.anrdoid.processor.TypeUtils;
 import me.foolishchow.anrdoid.processor.TypeNames;
 import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;
@@ -99,7 +100,10 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
 
             String fieldName = element.getSimpleName().toString();
             String keyName = camel2snake(fieldName);
-            addFieldKey(builder, fieldName, keyName);
+
+            IntentParam annotation = element.getAnnotation(IntentParam.class);
+            boolean originName = annotation.originName();
+            addFieldKey(builder, fieldName, keyName, originName);
 
             TypeMirror typeMirror = element.asType();
             TypeName typeName = ParameterizedTypeName.get(typeMirror);
@@ -129,20 +133,20 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
 
     }
 
-    private void addFieldKey(TypeSpec.Builder builder, String fieldName, String keyName) {
+    private void addFieldKey(TypeSpec.Builder builder, String fieldName, String keyName, boolean originName) {
         FieldSpec.Builder field = FieldSpec.builder(
                 TypeNames.STRING,
                 keyName,
                 Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC
         );
-        field.initializer(wrapString(escapeString(fieldName)));
+        field.initializer(wrapString(originName ? fieldName : escapeString(fieldName)));
         builder.addField(field.build());
     }
 
     private void addParamStatement(Elements elements, String keyName, TypeName typeName, MethodSpec.Builder method) {
         if (TypeUtils.isStringArrayList(typeName)) {
             method.addStatement("mIntent.putStringArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.STRING);
-        } else if (TypeUtils.isCharSequenceArrayList(elements,typeName)) {
+        } else if (TypeUtils.isCharSequenceArrayList(elements, typeName)) {
             method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.CharSequence);
         } else if (TypeUtils.isIntegerArrayList(typeName)) {
             method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.INTEGER);
@@ -178,7 +182,7 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
             parse.addStatement(format("%s = intent.getIntArrayExtra(%s)", preffix, keyName));
         } else if (TypeUtils.isIntegerArrayList(typeName)) {
             parse.addStatement(format("%s = intent.getIntegerArrayListExtra(%s)", preffix, keyName));
-        }else if (TypeUtils.isByte(typeName) || TypeUtils.isBoxedByte(typeName)) {
+        } else if (TypeUtils.isByte(typeName) || TypeUtils.isBoxedByte(typeName)) {
             parse.addStatement(format("%s = intent.getByteExtra(%s,$T.MIN_VALUE)", preffix, keyName), Byte.class);
         } else if (TypeUtils.isByteArray(typeName)) {
             parse.addStatement(format("%s = intent.getByteArrayExtra(%s)", preffix, keyName));
@@ -216,15 +220,15 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
             parse.addStatement(format("%s = ($T)intent.getCharSequenceExtra(%s)", preffix, keyName), typeName);
         } else if (TypeUtils.isCharSequenceArray(elements, typeName)) {
             parse.addStatement(format("%s = ($T)intent.getCharSequenceArrayExtra(%s)", preffix, keyName), typeName);
-        } else if (TypeUtils.isCharSequenceArrayList(elements,typeName)) {
+        } else if (TypeUtils.isCharSequenceArrayList(elements, typeName)) {
             parse.addStatement(format("%s = ($T)intent.getCharSequenceArrayListExtra(%s)", preffix, keyName), typeName);
         } else if (TypeUtils.isParcelable(elements, typeName)) {
             parse.addStatement(format("%s = ($T)intent.getParcelableExtra(%s)", preffix, keyName), typeName);
-        }else if (TypeUtils.isParcelableArray(elements, typeName)) {
+        } else if (TypeUtils.isParcelableArray(elements, typeName)) {
             parse.addStatement(format("%s = ($T)intent.getParcelableArrayExtra(%s)", preffix, keyName), typeName);
-        }else if (TypeUtils.isParcelableArrayList(elements, typeName)) {
+        } else if (TypeUtils.isParcelableArrayList(elements, typeName)) {
             parse.addStatement(format("%s = ($T)intent.getParcelableArrayListExtra(%s)", preffix, keyName), typeName);
-        }else{
+        } else {
             parse.addStatement(format("%s = ($T)intent.getSerializableExtra(%s)", preffix, keyName), typeName);
         }
 
