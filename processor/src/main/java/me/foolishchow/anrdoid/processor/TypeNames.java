@@ -35,6 +35,8 @@ public class TypeNames {
 
     public final static ClassName SERIALIZABLE = ClassName.get("java.io", "Serializable");
     public static final ClassName INTEGER = ClassName.get("java.lang", "Integer");
+
+    public static final ClassName BUNDLE = ClassName.get("android.os", "Bundle");
     ;
     //Serializable.class.getCanonicalName();
 

@@ -46,6 +46,10 @@ dependencies {
     //implementation "me.foolishchow.android:utils:0.0.8"
     //implementation "me.foolishchow.android:annotation:0.0.8"
 
+    api 'androidx.navigation:navigation-fragment:2.3.4'
+    api 'androidx.navigation:navigation-ui:2.3.4'
+
+
     api project(":utils")
     annotationProcessor project(':processor')
 }

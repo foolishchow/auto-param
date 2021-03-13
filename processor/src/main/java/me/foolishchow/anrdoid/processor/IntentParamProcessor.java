@@ -1,4 +1,4 @@
-package me.foolishchow.anrdoid.processor.intent;
+package me.foolishchow.anrdoid.processor;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;

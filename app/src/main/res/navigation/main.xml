@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    app:startDestination="@id/main">
+
+    <fragment
+        android:id="@+id/main"
+        android:name="me.foolishchow.androidplugins.fragment.MainFragment"
+        android:label="MainFragment">
+        <action
+            android:id="@+id/action_main_to_child"
+            app:destination="@id/child" />
+    </fragment>
+    <fragment
+        android:id="@+id/child"
+        android:name="me.foolishchow.androidplugins.fragment.ChildFragment"
+        android:label="ChildFragment" />
+</navigation>
