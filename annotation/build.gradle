@@ -1,5 +1,4 @@
 apply plugin: 'java-library'
-apply plugin: 'bintray-release'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -7,19 +6,5 @@ dependencies {
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
-
-
-
-//添加
-publish {
-    repoName = rootProject.repoName
-    artifactId = 'annotation'
-    userOrg = rootProject.userOrg
-    groupId = rootProject.groupId
-    //uploadName = rootProject.uploadName
-    publishVersion = rootProject.publishVersion
-    desc = rootProject.desc
-    website = rootProject.website
-}
 
 

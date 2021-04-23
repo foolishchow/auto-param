@@ -1,41 +1,15 @@
-//apply plugin: 'java'
 apply plugin: 'java-library'
-apply plugin: 'bintray-release'
 
 dependencies {
     //implementation project(':annotation')
     //noinspection GradleDependency
     api 'me.foolishchow.android:annotation:0.0.20'
     //noinspection GradleDependency
-    implementation 'com.squareup:javapoet:1.11.1'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    api 'com.squareup:javapoet:1.11.1'
+    api 'com.google.code.findbugs:jsr305:3.0.2'
     //implementation 'com.google.auto.service:auto-service:1.0-rc5'
     //annotationProcessor 'com.google.auto.service:auto-service:1.0-rc5'
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
-
-
-
-
-//apply plugin: 'maven'
-
-//def groupId = 'me.foolishchow.android.annotation'
-//def artifactId = 'processor'
-//def version = '0.0.1'
-//
-//def localReleaseDest = "${buildDir}/release/${version}"
-
-
-//添加
-publish {
-    repoName = rootProject.repoName
-    artifactId = 'processor'
-    userOrg = rootProject.userOrg
-    groupId = rootProject.groupId
-    //uploadName = rootProject.uploadName
-    publishVersion = rootProject.publishVersion
-    desc = rootProject.desc
-    website = rootProject.website
-}

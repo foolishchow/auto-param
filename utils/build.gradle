@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'bintray-release'
 
 android {
     compileSdkVersion 30
@@ -25,7 +24,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.annotation:annotation:1.1.0'
+    //noinspection GradleDependency
+    api 'androidx.annotation:annotation:1.1.0'
     //noinspection GradleDependency
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -33,17 +33,4 @@ dependencies {
 
     //noinspection GradleDependency
     api 'me.foolishchow.android:annotation:0.0.20'
-}
-
-
-//添加
-publish {
-    repoName = rootProject.repoName
-    artifactId = 'utils'
-    userOrg = rootProject.userOrg
-    groupId = rootProject.groupId
-    //uploadName = rootProject.uploadName
-    publishVersion = rootProject.publishVersion
-    desc = rootProject.desc
-    website = rootProject.website
 }
