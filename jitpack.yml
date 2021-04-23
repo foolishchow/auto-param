@@ -1,4 +1,6 @@
 install:
-  - ./gradlew :annotation:clean :annotation:build
-  - ./gradlew :processor:clean :processor:build
-  - ./gradlew :utils:build :utils:publishToMavenLocal
+#  - ./gradlew :annotation:clean :annotation:build :annotation:install
+#  - ./gradlew :processor:clean :processor:build
+#  - ./gradlew :utils:build :utils:publishToMavenLocal
+  - ./gradlew clean install
+
