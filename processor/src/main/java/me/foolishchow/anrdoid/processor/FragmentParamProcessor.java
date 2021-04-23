@@ -116,6 +116,7 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
                 .addStatement("return")
                 .endControlFlow();
 
+        boolean hasCacheToTag = false;
         for (Element element : mElements) {
 
             String fieldName = element.getSimpleName().toString();
@@ -130,6 +131,7 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
             addFieldKey(builder, fieldName, keyName, originName);
             boolean cacheToTag = annotation.cacheToTag();
             if (cacheToTag) {
+                hasCacheToTag = true;
                 createField(builder, fieldName, typeName);
             }
 
@@ -159,7 +161,9 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
         }
 
         addNormalFragment(builder, originClassType);
-        addTag(builder, originClassType);
+        if (hasCacheToTag) {
+            addTag(builder, originClassType);
+        }
         builder.addMethod(parse.build());
 
     }
