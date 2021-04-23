@@ -19,7 +19,8 @@ import javax.lang.model.util.Elements;
 
 import me.foolishchow.android.annotation.Constant;
 import me.foolishchow.android.annotation.FragmentParam;
-import me.foolishchow.android.annotation.IntentParam;
+import me.foolishchow.android.annotation.Navigation;
+import me.foolishchow.android.annotation.NavigationAction;
 import me.foolishchow.anrdoid.processor.base.BaseAnnotationProcessor;
 
 /**
@@ -74,11 +75,24 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
         builder.addField(field.build());
 
 
+        if (!isDialog(elements)) {
+            Navigation annotation = mOriginClass.getAnnotation(Navigation.class);
+            if (annotation != null) {
+                NavigationAction[] actions = annotation.actions();
+                if (actions != null) {
+                    for (NavigationAction action : actions) {
+                        addNavigate(builder, action);
+                    }
+
+                }
+            }
+        }
         MethodSpec.Builder getBundle = MethodSpec
                 .methodBuilder("getBundle")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(TypeNames.BUNDLE)
-                .addStatement("return mBundle");;
+                .addStatement("return mBundle");
+        ;
         builder.addMethod(getBundle.build());
 
         MethodSpec.Builder withContext = MethodSpec
@@ -107,12 +121,18 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
             String fieldName = element.getSimpleName().toString();
             String keyName = camel2snake(fieldName);
 
+            TypeMirror typeMirror = element.asType();
+            TypeName typeName = ParameterizedTypeName.get(typeMirror);
+
+
             FragmentParam annotation = element.getAnnotation(FragmentParam.class);
             boolean originName = annotation.originName();
             addFieldKey(builder, fieldName, keyName, originName);
+            boolean cacheToTag = annotation.cacheToTag();
+            if (cacheToTag) {
+                createField(builder, fieldName, typeName);
+            }
 
-            TypeMirror typeMirror = element.asType();
-            TypeName typeName = ParameterizedTypeName.get(typeMirror);
 
             //System.out.println(String.format(
             //        "addElement=>name=%s,type=%s",
@@ -128,6 +148,9 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
 
             //method.addComment(format("field %s type %s ", fieldName, typeName.toString()));
             addParamStatement(elements, keyName, typeName, method);
+            if (cacheToTag) {
+                method.addStatement("this." + fieldName + " = param");
+            }
             method.addStatement("return this");
             builder.addMethod(method.build());
 
@@ -135,7 +158,89 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
 
         }
 
+        addNormalFragment(builder, originClassType);
+        addTag(builder, originClassType);
         builder.addMethod(parse.build());
+
+    }
+
+    private void addNavigate(TypeSpec.Builder builder, NavigationAction action) {
+        //noinspection ConstantConditions
+        if (action.name() == null || action.name().length() == 0) return;
+
+        MethodSpec.Builder navigate = MethodSpec
+                .methodBuilder(action.name())
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(TypeNames.View, "view")
+                .returns(void.class);
+
+        navigate.addJavadoc(action.description() + "\n");
+
+        //Navigation
+        navigate.addStatement("$T.findNavController(view).navigate(" + action.actionId() + "," +
+                "mBundle) ", TypeNames.Navigation);
+        builder.addMethod(navigate.build());
+
+    }
+
+
+    private boolean isDialog(Elements elements) {
+        TypeMirror superclass = mOriginClass.getSuperclass();
+        if (superclass == null) {
+            return false;
+        }
+        boolean isDialog = false;
+        while (superclass != null) {
+            if (superclass.toString().equals("androidx.fragment.app.DialogFragment")) {
+                isDialog = true;
+                superclass = null;
+            } else {
+                TypeElement typeElement = elements.getTypeElement(superclass.toString());
+                superclass = typeElement == null ? null : typeElement.getSuperclass();
+            }
+        }
+        return isDialog;
+    }
+
+    private void addTag(
+            TypeSpec.Builder builder,
+            ClassName originClassType
+    ) {
+        StringBuilder tagName = new StringBuilder("\"" + originClassType.simpleName() + "\"");
+        for (Element element : mElements) {
+            FragmentParam annotation = element.getAnnotation(FragmentParam.class);
+            boolean cacheToTag = annotation.cacheToTag();
+            if (cacheToTag) {
+                tagName.append(" + \"-\" + ").append(element.getSimpleName().toString());
+            }
+        }
+
+        MethodSpec.Builder getBundle = MethodSpec
+                .methodBuilder("getTag")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(String.class);
+        getBundle.addStatement("return " + tagName.toString() + "");
+        builder.addMethod(getBundle.build());
+    }
+
+    private void addNormalFragment(
+            TypeSpec.Builder builder,
+            ClassName originClassType
+    ) {
+        MethodSpec.Builder getBundle = MethodSpec
+                .methodBuilder("build")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(originClassType);
+        getBundle.addStatement("$T fragment = null", originClassType)
+                .beginControlFlow("try")
+                .addStatement("fragment = $T.class.newInstance()", originClassType)
+                .addStatement("fragment.setArguments(mBundle)")
+                .nextControlFlow("catch ($T e)", TypeNames.Throwable)
+                .addStatement("e.printStackTrace()")
+                .endControlFlow()
+                .addStatement("assert fragment != null");
+        getBundle.addStatement("return fragment");
+        builder.addMethod(getBundle.build());
     }
 
     private void addParamStatement(
@@ -295,6 +400,15 @@ public class FragmentParamProcessor extends BaseAnnotationProcessor {
         parse.endControlFlow();
     }
 
+    private void createField(TypeSpec.Builder builder, String fieldName, TypeName typeName) {
+
+        FieldSpec.Builder field = FieldSpec.builder(
+                typeName,
+                fieldName,
+                Modifier.PRIVATE
+        );
+        builder.addField(field.build());
+    }
 
     private void addFieldKey(TypeSpec.Builder builder, String fieldName, String keyName, boolean originName) {
         FieldSpec.Builder field = FieldSpec.builder(

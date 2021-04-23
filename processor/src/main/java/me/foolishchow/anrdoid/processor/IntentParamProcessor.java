@@ -149,7 +149,7 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
         } else if (TypeUtils.isCharSequenceArrayList(elements, typeName)) {
             method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.CharSequence);
         } else if (TypeUtils.isIntegerArrayList(typeName)) {
-            method.addStatement("mIntent.putCharSequenceArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.INTEGER);
+            method.addStatement("mIntent.putIntegerArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.INTEGER);
         } else if (TypeUtils.isParcelableArrayList(elements, typeName)) {
             method.addStatement("mIntent.putParcelableArrayListExtra(" + keyName + ",new $T<$T>(param))", TypeNames.ARRAY_LIST, TypeNames.PARCELABLE);
         } else if (TypeUtils.isList(typeName)) {

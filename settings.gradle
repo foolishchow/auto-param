@@ -1,6 +1,5 @@
 include ':processor'
 include ':annotation'
 include ':utils'
-//include ':app'
-//include ':multi-module'
+include ':app'
 rootProject.name = "android-plugins"

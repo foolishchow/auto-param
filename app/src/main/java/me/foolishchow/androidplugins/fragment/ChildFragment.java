@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import me.foolishchow.android.annotation.FragmentParam;
+import me.foolishchow.android.annotation.IntentParam;
 import me.foolishchow.androidplugins.R;
 
 /**
@@ -16,7 +18,13 @@ import me.foolishchow.androidplugins.R;
  * Author: foolishchow
  * Date: 13/3/2021 12:06 PM
  */
-public class ChildFragment extends Fragment {
+public class ChildFragment extends SecondBaseDialogFragment {
+
+    @FragmentParam(cacheToTag = true)
+    int param;
+
+    @FragmentParam(cacheToTag = true)
+    String param1;
 
     @Nullable
     @Override

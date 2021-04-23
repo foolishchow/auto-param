@@ -5,14 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Description:
+ * Author: foolishchow
+ * Date: 23/4/2021 9:50 PM
+ */
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
-public @interface FragmentParam {
-    boolean originName() default false;
-
-    /**
-     * use this argument to fragment tag
-     * @return
-     */
-    boolean cacheToTag() default false;
+@Target(ElementType.TYPE)
+public @interface Navigation {
+    NavigationAction[] actions();
 }

@@ -4,9 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import java.util.List;
+
+import me.foolishchow.android.annotation.IntentParam;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    @IntentParam
+    List<Integer> ints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

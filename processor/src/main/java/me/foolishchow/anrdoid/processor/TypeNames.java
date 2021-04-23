@@ -37,7 +37,10 @@ public class TypeNames {
     public static final ClassName INTEGER = ClassName.get("java.lang", "Integer");
 
     public static final ClassName BUNDLE = ClassName.get("android.os", "Bundle");
-    ;
+    public static final ClassName Throwable = ClassName.get("java.lang", "Throwable");
+    public static final ClassName FragmentManager = ClassName.get("androidx.fragment.app", "FragmentManager");
+    public static final ClassName View = ClassName.get("android.view", "View");
+    public static final ClassName Navigation = ClassName.get("androidx.navigation", "Navigation");
     //Serializable.class.getCanonicalName();
 
 }

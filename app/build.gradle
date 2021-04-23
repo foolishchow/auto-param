@@ -6,7 +6,7 @@ android {
     buildToolsVersion "30.0.0"
 
     defaultConfig {
-        applicationId "me.foolishchow.androidplugins"
+        applicationId "me.foolishchow.autoparamdemo"
         minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
@@ -40,14 +40,14 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     //implementation "me.foolishchow.android:utils:0.0.8"
     //implementation "me.foolishchow.android:annotation:0.0.8"
 
-    api 'androidx.navigation:navigation-fragment:2.3.4'
-    api 'androidx.navigation:navigation-ui:2.3.4'
+    api 'androidx.navigation:navigation-fragment:2.3.5'
+    api 'androidx.navigation:navigation-ui:2.3.5'
 
 
     api project(":utils")
