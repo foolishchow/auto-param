@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
+
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
@@ -34,3 +36,5 @@ dependencies {
     //noinspection GradleDependency
     api 'me.foolishchow.android:annotation:0.0.20'
 }
+
+group = 'com.github.foolishchow'

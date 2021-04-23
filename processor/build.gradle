@@ -1,4 +1,5 @@
 apply plugin: 'java-library'
+apply plugin: 'maven'
 
 dependencies {
     //implementation project(':annotation')
@@ -13,3 +14,6 @@ dependencies {
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+
+group = 'com.github.foolishchow'
