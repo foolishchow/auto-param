@@ -4,7 +4,7 @@ apply plugin: 'maven'
 dependencies {
     //implementation project(':annotation')
     //noinspection GradleDependency
-    api 'me.foolishchow.android:annotation:0.0.20'
+    api project(':annotation')
     //noinspection GradleDependency
     api 'com.squareup:javapoet:1.11.1'
     api 'com.google.code.findbugs:jsr305:3.0.2'

@@ -8,5 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface FragmentParam {
-    public boolean originName() default false;
+    boolean originName() default false;
+    boolean cacheId() default false;
 }

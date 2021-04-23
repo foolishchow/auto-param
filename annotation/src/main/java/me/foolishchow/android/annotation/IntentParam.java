@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface IntentParam {
-    public boolean originName() default false;
+    boolean originName() default false;
 }
