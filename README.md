@@ -3,14 +3,16 @@
 
 generate param jumper for Activity and Fragment
 
+[![Release](https://jitpack.io/v/foolishchow/auto-param.svg)]
+(https://jitpack.io/#foolishchow/auto-param)
 
 ## usage
 
 - dependence
-```gradle
-implementation 'com.github.foolishchow.auto-param:utils:0.0.22'
-annotationProcessor 'com.github.foolishchow.auto-param:processor:0.0.22'
-```
+  ```gradle
+  implementation 'com.github.foolishchow.auto-param:utils:0.0.22'
+  annotationProcessor 'com.github.foolishchow.auto-param:processor:0.0.22'
+  ```
 - activity   
   ```java
   public MyActivity extends XXXActivity{
