@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 
 import me.foolishchow.android.annotation.FragmentParam;
 import me.foolishchow.android.annotation.IntentParam;
+import me.foolishchow.android.annotation.Navigation;
+import me.foolishchow.android.annotation.NavigationAction;
 import me.foolishchow.androidplugins.R;
 
 /**
@@ -18,12 +20,19 @@ import me.foolishchow.androidplugins.R;
  * Author: foolishchow
  * Date: 13/3/2021 12:06 PM
  */
-public class ChildFragment extends SecondBaseDialogFragment {
+@Navigation(actions = {
+        @NavigationAction(
+                name = "fromMain",
+                actionId = R.id.action_main_to_child,
+                description = "jump from main to child"
+        )
+})
+public class MyFragment extends Fragment {
 
-    @FragmentParam(cacheToTag = true)
+    @FragmentParam
     int param;
 
-    @FragmentParam(cacheToTag = true)
+    @FragmentParam
     String param1;
 
     @Nullable
