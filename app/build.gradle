@@ -1,4 +1,11 @@
-apply plugin: 'com.android.application'
+import com.android.build.gradle.BaseExtension
+import me.foolishchow.android.navigationtransform.NavigationTransformTask
+
+plugins {
+    id 'com.android.application'
+    id "navigation-transform"
+}
+
 
 android {
 
@@ -13,7 +20,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "PUSH_MI_APP_ID", "\"2882303761518343180\"")
     }
+
 
     buildTypes {
         release {
@@ -27,29 +37,32 @@ android {
         }
 
 
-        lints {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+        //lints {
+        //    minifyEnabled false
+        //    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        //}
     }
 
 
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
+
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    //implementation "me.foolishchow.android:utils:0.0.8"
-    //implementation "me.foolishchow.android:annotation:0.0.8"
 
-    api 'androidx.navigation:navigation-fragment:2.3.5'
-    api 'androidx.navigation:navigation-ui:2.3.5'
+
 
 
     api project(":utils")
     annotationProcessor project(':processor')
 }
+
+
+

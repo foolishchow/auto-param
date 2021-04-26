@@ -3,17 +3,13 @@ buildscript {
     repositories {
         google()
         jcenter()
+        //maven { url "./navigation-transform/build/release"}
     }
     dependencies {
         //noinspection GradleDependency
-        //classpath 'com.novoda:bintray-release:0.9.1'
-        //noinspection GradleDependency
         classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        //classpath 'me.foolishchow.android.viewbinding:view-binding:0.0.1'
-        //classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        //classpath 'com.github.foolishchow.android:navigation-transform:0.0.1'
     }
 }
 
@@ -21,6 +17,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        //maven { url "./navigation-transform/build/release"}
     }
 }
 

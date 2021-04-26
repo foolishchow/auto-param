@@ -1,5 +1,10 @@
+//include ':navigation-transform'
 include ':processor'
 include ':annotation'
 include ':utils'
 include ':app'
+
+//if(file('navigation-transform').exists()) {
+//    includeBuild 'navigation-transform'
+//}
 rootProject.name = "android-plugins"

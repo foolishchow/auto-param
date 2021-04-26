@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_nav"
-    app:startDestination="@id/main">
+    android:id="@+id/main_two_demo"
+    app:startDestination="@id/main_two">
 
     <fragment
-        android:id="@+id/main"
+        android:id="@+id/main_two"
         android:name="me.foolishchow.androidplugins.fragment.MainFragment"
         android:label="MainFragment">
         <action
@@ -13,7 +13,7 @@
             app:destination="@id/child" />
     </fragment>
     <fragment
-        android:id="@+id/child"
+        android:id="@+id/child_two"
         android:name="me.foolishchow.androidplugins.fragment.MyFragment"
         android:label="ChildFragment" />
 </navigation>
