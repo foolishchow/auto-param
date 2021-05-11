@@ -148,7 +148,7 @@ public abstract class NavigationTransformTask extends DefaultTask {
         return snake2camel(str)
     }
 
-    private static String snake2camel(String str) {
+    public static String snake2camel(String str) {
         Matcher matcher = camelPattern.matcher(str);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
