@@ -1,6 +1,8 @@
 
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
     id "navigation-transform"
 }
 
@@ -24,7 +26,7 @@ android {
 
 
     packagingOptions{
-        exclude 'src/main/res/navigatin'
+        exclude '**/res/navigatin/**'
     }
 
     buildTypes {
@@ -34,7 +36,8 @@ android {
         }
 
         debug {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
@@ -51,8 +54,8 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
-    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
 
     testImplementation 'junit:junit:4.13.2'
@@ -63,7 +66,7 @@ dependencies {
 
 
     api project(":utils")
-    annotationProcessor project(':processor')
+    kapt project(':processor')
 }
 
 

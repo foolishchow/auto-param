@@ -1,4 +1,4 @@
-package me.foolishchow.androidplugins;
+package me.foolishchow.autoparamdemo;
 
 import android.content.Context;
 

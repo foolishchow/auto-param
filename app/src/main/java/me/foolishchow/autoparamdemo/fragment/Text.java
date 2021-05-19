@@ -1,4 +1,4 @@
-package me.foolishchow.androidplugins.fragment;
+package me.foolishchow.autoparamdemo.fragment;
 
 import java.io.Serializable;
 

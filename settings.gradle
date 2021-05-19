@@ -7,4 +7,4 @@ include ':app'
 //if(file('navigation-transform').exists()) {
 //    includeBuild 'navigation-transform'
 //}
-rootProject.name = "android-plugins"
+rootProject.name = "auto-param"

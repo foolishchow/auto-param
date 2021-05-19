@@ -6,14 +6,15 @@
 
     <fragment
         android:id="@+id/main_two"
-        android:name="me.foolishchow.androidplugins.fragment.MainFragment"
+        android:name="me.foolishchow.autoparamdemo.fragment.MainFragment"
         android:label="MainFragment">
         <action
+
             android:id="@+id/action_main_to_child"
             app:destination="@id/child" />
     </fragment>
     <fragment
         android:id="@+id/child_two"
-        android:name="me.foolishchow.androidplugins.fragment.MyFragment"
+        android:name="me.foolishchow.autoparamdemo.fragment.MyFragment"
         android:label="ChildFragment" />
 </navigation>

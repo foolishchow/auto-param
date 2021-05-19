@@ -1,4 +1,4 @@
-package me.foolishchow.androidplugins.fragment;
+package me.foolishchow.autoparamdemo.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -72,14 +72,28 @@ public class MainFragment extends BaseFragment {
 
     @FragmentParam
     boolean[] bools;
-    @FragmentParam
-    Text text;
+    //@FragmentParam
+    //Text text;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = new Bundle();
         setArguments(bundle);
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.go).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                androidx.navigation.Navigation.findNavController(v)
+                        .navigate(R.id.action_main_to_child);
+            }
+        });
+
     }
 
     @Nullable

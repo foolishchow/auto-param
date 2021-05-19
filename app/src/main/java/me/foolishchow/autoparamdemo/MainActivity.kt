@@ -1,55 +1,35 @@
-package me.foolishchow.androidplugins;
+package me.foolishchow.autoparamdemo
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import me.foolishchow.android.annotation.IntentParam
+import me.foolishchow.autoparamdemo.navigation.NavigationManager
 
-import android.os.Bundle;
-
-import java.util.List;
-
-import me.foolishchow.android.annotation.IntentParam;
-import me.foolishchow.autoparamdemo.R;
-import me.foolishchow.autoparamdemo.navigation.MainNavigation;
-
-
-public class MainActivity extends AppCompatActivity {
-
+open class MainActivity : AppCompatActivity() {
+    @JvmField
     @IntentParam
-    List<Integer> ints;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        NavController controller = getNavController();
-        MainNavigation navDestinations = new MainNavigation(controller);
-
-        NavGraph inflate = controller.getNavInflater().inflate(R.navigation.main);
-        String displayName = inflate.getNavigatorName();
-        //Class<MainActivity$ShadowLifeCycleDelegate> classes =
-        //        MainActivity$ShadowLifeCycleDelegate.class;
-        //mKernalViewBinding.mNavTitle.setText("sdasdasdasd");
-        //setContentView(R.layout.activity_main);
-        //MainActivity$ShadowLifeCycleDelegate mainActivity$ShadowLifeCycleDelegate = new MainActivity$ShadowLifeCycleDelegate();
-        //mainActivity$ShadowLifeCycleDelegate.restoreInstanceState();
+    protected var ints: List<Int>? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        val controller = navController
+        NavigationManager.attach(controller, R.navigation.main)
+        //val navDestinations = M(controller)
+        //val inflate = controller!!.navInflater.inflate(R.navigation.main)
+        //val displayName = inflate.navigatorName
     }
 
-    @Nullable
-    private NavController getNavController() {
-        try {
-            NavHostFragment loginNavHost = (NavHostFragment) getSupportFragmentManager().findFragmentByTag("login_nav_host");
-            if (loginNavHost == null) return null;
-            return loginNavHost.getNavController();
-        } catch (Exception ignored) {
-
+    private val navController: NavController?
+        get() {
+            try {
+                val loginNavHost = supportFragmentManager
+                        .findFragmentByTag("login_nav_host") as NavHostFragment?
+                        ?: return null
+                return loginNavHost.navController
+            } catch (ignored: Exception) {
+            }
+            return null
         }
-        return null;
-    }
-
-
 }

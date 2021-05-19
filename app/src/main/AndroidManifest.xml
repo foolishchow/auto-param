@@ -9,9 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="me.foolishchow.androidplugins.IntentParamActivity"></activity>
-        <activity android:name="me.foolishchow.androidplugins.UserActivity" />
-        <activity android:name="me.foolishchow.androidplugins.MainActivity">
+        <activity android:name=".IntentParamActivity"></activity>
+        <activity android:name=".UserActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,11 +1,10 @@
-package me.foolishchow.androidplugins;
+package me.foolishchow.autoparamdemo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
 import me.foolishchow.android.annotation.IntentParam;
-import me.foolishchow.autoparamdemo.R;
 
 public class UserActivity extends AppCompatActivity {
 

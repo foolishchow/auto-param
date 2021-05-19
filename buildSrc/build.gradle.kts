@@ -9,9 +9,11 @@ repositories {
     jcenter()
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java{
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
 
-dependencies{
+dependencies {
     implementation(gradleApi())
     implementation(localGroovy())
     implementation("com.squareup:javapoet:1.11.1")

@@ -1,7 +1,4 @@
-package me.foolishchow.androidplugins.fragment;
-
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
+package me.foolishchow.autoparamdemo.fragment;
 
 /**
  * Description:

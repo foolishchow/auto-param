@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     android:tag="login_nav_host"
     app:defaultNavHost="true"
-    app:navGraph="@navigation/main"
-    tools:context=".MainActivity" />
+     />
 
 
