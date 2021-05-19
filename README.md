@@ -3,8 +3,8 @@
 
 generate param jumper for Activity and Fragment
 
-[![Release](https://jitpack.io/v/foolishchow/auto-param.svg)]
-(https://jitpack.io/#foolishchow/auto-param)
+[![](https://jitpack.io/v/foolishchow/auto-param.svg)](https://jitpack.io/#foolishchow/auto-param)
+
 
 ## usage
 

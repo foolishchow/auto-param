@@ -7,14 +7,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import java.util.List;
 
 import me.foolishchow.android.annotation.FragmentParam;
 import me.foolishchow.android.annotation.Navigation;
 import me.foolishchow.android.annotation.NavigationAction;
-import me.foolishchow.androidplugins.R;
+import me.foolishchow.autoparamdemo.R;
 
 /**
  * Description:
