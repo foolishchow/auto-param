@@ -16,7 +16,8 @@ open class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val controller = navController
         NavigationManager.attach(controller, R.navigation.main)
-        //val navDestinations = M(controller)
+        println("")
+        //val navDestinations = MainActivity(controller)
         //val inflate = controller!!.navInflater.inflate(R.navigation.main)
         //val displayName = inflate.navigatorName
     }
@@ -24,10 +25,8 @@ open class MainActivity : AppCompatActivity() {
     private val navController: NavController?
         get() {
             try {
-                val loginNavHost = supportFragmentManager
-                        .findFragmentByTag("login_nav_host") as NavHostFragment?
-                        ?: return null
-                return loginNavHost.navController
+                val loginNavHost = supportFragmentManager.findFragmentByTag("login_nav_host") as NavHostFragment?
+                return loginNavHost?.navController
             } catch (ignored: Exception) {
             }
             return null

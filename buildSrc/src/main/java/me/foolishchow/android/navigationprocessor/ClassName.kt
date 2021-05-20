@@ -11,46 +11,46 @@ import com.squareup.javapoet.WildcardTypeName
  * Date: 2021/05/19 2:26 PM
  */
 
-val Navigator = ParameterizedTypeName.get(
+val Navigator: ParameterizedTypeName = ParameterizedTypeName.get(
         ClassName.get("androidx.navigation", "Navigator"),
         WildcardTypeName.subtypeOf(TypeName.OBJECT)
 )
 
-val NavAction = ClassName.get(
+val NavAction: ClassName = ClassName.get(
         "androidx.navigation",
         "NavAction"
 )
 
 
-val NavigationUtil = ClassName.get("me.foolishchow.androidplugins.fake", "NavigationUtils")
-val NavigatorProvider = ClassName.get("androidx.navigation", "NavigatorProvider")
+val NavigationUtil: ClassName = ClassName.get("me.foolishchow.androidplugins.fake", "NavigationUtils")
+val NavigatorProvider: ClassName = ClassName.get("androidx.navigation", "NavigatorProvider")
 
 
-val NavController = ClassName.get(
+val NavController: ClassName = ClassName.get(
         "androidx.navigation",
         "NavController")
 
-val FragmentNavigator = ClassName.get(
+val FragmentNavigator: ClassName = ClassName.get(
         "androidx.navigation.fragment",
         "FragmentNavigator"
 )
-val FragmentDestination = ClassName.get(
+val FragmentDestination: ClassName = ClassName.get(
         "androidx.navigation.fragment",
         "FragmentNavigator.Destination"
 )
 
-val NavGraphNavigator = ClassName.get(
+val NavGraphNavigator: ClassName = ClassName.get(
         "androidx.navigation",
         "NavGraphNavigator"
 )
-val NavGraph = ClassName.get(
+val NavGraph: ClassName = ClassName.get(
         "androidx.navigation",
         "NavGraph"
 )
 
-val NavOptionsBuilder = ClassName.get(
+val NavOptionsBuilder: ClassName = ClassName.get(
         "androidx.navigation",
-        "NavOptions.Builder"
+        "NavOptions"
 )
 
 

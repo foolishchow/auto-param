@@ -1,28 +1,40 @@
 package me.foolishchow.android.navigationprocessor
 
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import com.squareup.javapoet.*
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.TypeSpec
 import groovy.util.Node
 import groovy.util.XmlParser
-import me.foolishchow.android.navigationprocessor.extensions.deleteSelf
-import me.foolishchow.android.navigationprocessor.extensions.snake2camel
+import me.foolishchow.android.navigationprocessor.extensions.navigationDir
 import me.foolishchow.android.navigationprocessor.extensions.resId
 import me.foolishchow.android.navigationprocessor.extensions.resourceSymbol
+import me.foolishchow.android.navigationprocessor.extensions.snake2camel
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import javax.lang.model.element.Modifier
 
-abstract class NavigationTransformTask : DefaultTask() {
+
+abstract class NavigationTask : DefaultTask() {
 
     @InputFiles
     abstract fun getNavFiles(): ConfigurableFileCollection
 
+    private var outputDir:File? = null
+
+    @OutputDirectory
+    open fun getOutputDir(): File? {
+        return outputDir
+    }
+
     private lateinit var android: BaseAppModuleExtension
     private lateinit var packageName: String
-    private lateinit var mBuildType: String
+    private lateinit var mVariantName: String
 
     private lateinit var mDir: File
     private lateinit var mClass: TypeSpec.Builder
@@ -34,15 +46,11 @@ abstract class NavigationTransformTask : DefaultTask() {
         android = project.extensions.getByName("android") as BaseAppModuleExtension
         packageName = android.defaultConfig.applicationId
 
-        println("navigation-transform-task perform")
-        mBuildType = inputs.properties["buildType"] as String
-        android.buildTypes.forEach { buildType ->
-            val file = File(project.navigationDir(buildType))
-            if (!buildType.name.equals(mBuildType)) {
-                if (file.exists()) {
-                    file.deleteSelf()
-                }
-            } else {
+        mVariantName = inputs.properties["variant"] as String
+
+        android.applicationVariants.forEach{ variant->
+            val file = File(project.navigationDir(variant))
+            if (variant.name.equals(mVariantName)) {
                 mDir = file
             }
         }
@@ -91,7 +99,7 @@ abstract class NavigationTransformTask : DefaultTask() {
 
         method.addStatement("\$T fragment", FragmentDestination)
         method.addStatement("\$T action", NavAction)
-        method.addStatement("\$T builder", NavOptionsBuilder)
+        method.addStatement("\$T.Builder builder", NavOptionsBuilder)
         method.addStatement(
                 "\$T graph = controller.getNavigatorProvider().getNavigator(\$T.class).createDestination()",
                 NavGraph, NavGraphNavigator
@@ -158,7 +166,7 @@ abstract class NavigationTransformTask : DefaultTask() {
     }
 
     private fun parseAction(method: MethodSpec.Builder, action: Node) {
-        method.addStatement("builder = new \$T()", NavOptionsBuilder)
+        method.addStatement("builder = new \$T.Builder()", NavOptionsBuilder)
 
 
         var actionId = ""
