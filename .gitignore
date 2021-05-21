@@ -17,3 +17,4 @@ backup/
 /multi-module/build/
 /view-binding/build/
 /buildSrc/build/
+/PluginTestRepository/

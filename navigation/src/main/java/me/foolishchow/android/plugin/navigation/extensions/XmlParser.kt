@@ -8,6 +8,7 @@ import java.io.File
 const val ANDROID_NAMESPACE = "http://schemas.android.com/apk/res/android"
 const val APP_NAMESPACE = "http://schemas.android.com/apk/res-auto"
 
+@Suppress("unchecked_cast")
 fun Node.loopAttribute(predicate: (Map.Entry<QName, String>) -> Unit) {
     val attributes = this.attributes() as Map<QName, String>
     attributes.forEach(predicate)
