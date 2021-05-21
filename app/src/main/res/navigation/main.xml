@@ -15,5 +15,5 @@
     <fragment
         android:id="@+id/child"
         android:name="me.foolishchow.autoparamdemo.fragment.MyFragment"
-        android:label="ChildFragment" />
+        android:label="ChildFragment1" />
 </navigation>

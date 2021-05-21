@@ -16,7 +16,6 @@ open class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val controller = navController
         NavigationManager.attach(controller, R.navigation.main)
-        println("")
         //val navDestinations = MainActivity(controller)
         //val inflate = controller!!.navInflater.inflate(R.navigation.main)
         //val displayName = inflate.navigatorName

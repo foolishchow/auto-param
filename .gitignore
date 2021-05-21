@@ -16,3 +16,4 @@ backup/
 .idea
 /multi-module/build/
 /view-binding/build/
+/buildSrc/build/

@@ -1,4 +1,4 @@
-//include ':navigation-transform'
+include ':navigation'//include ':navigation-transform'
 include ':processor'
 include ':annotation'
 include ':utils'

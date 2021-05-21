@@ -1,4 +1,4 @@
-package me.foolishchow.android.navigationprocessor.extensions
+package me.foolishchow.android.plugin.navigation.extensions
 
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.internal.dsl.BuildType
