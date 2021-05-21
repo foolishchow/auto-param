@@ -7,12 +7,8 @@ import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.TypeSpec
 import groovy.util.Node
 import groovy.util.XmlParser
-import me.foolishchow.android.navigationprocessor.extensions.resId
-import me.foolishchow.android.navigationprocessor.extensions.resourceSymbol
-import me.foolishchow.android.navigationprocessor.extensions.snake2camel
-import org.apache.tools.ant.taskdefs.condition.IsLastModified
+import me.foolishchow.android.plugin.navigation.extensions.*
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.transform.InputArtifact
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.*
 import java.io.BufferedWriter

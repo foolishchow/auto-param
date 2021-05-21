@@ -1,8 +1,7 @@
 package me.foolishchow.android.plugin.navigation
 
 import com.android.build.gradle.api.ApplicationVariant
-import me.foolishchow.android.navigationprocessor.extensions.AaptRules
-import me.foolishchow.android.navigationprocessor.extensions.navRuleFile
+import me.foolishchow.android.plugin.navigation.extensions.*
 import org.gradle.api.Project
 import java.io.BufferedReader
 import java.io.BufferedWriter

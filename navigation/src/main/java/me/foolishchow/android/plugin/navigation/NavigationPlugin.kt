@@ -2,7 +2,10 @@ package me.foolishchow.android.plugin.navigation
 
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import me.foolishchow.android.navigationprocessor.extensions.*
+import me.foolishchow.android.plugin.navigation.extensions.NavigationTaskName
+import me.foolishchow.android.plugin.navigation.extensions.navJavaDir
+import me.foolishchow.android.plugin.navigation.extensions.navResDir
+import me.foolishchow.android.plugin.navigation.extensions.navRuleFile
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.closureOf
