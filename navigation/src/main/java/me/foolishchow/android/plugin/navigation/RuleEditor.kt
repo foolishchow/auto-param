@@ -3,10 +3,7 @@ package me.foolishchow.android.plugin.navigation
 import com.android.build.gradle.api.ApplicationVariant
 import me.foolishchow.android.plugin.navigation.extensions.*
 import org.gradle.api.Project
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.FileReader
-import java.io.FileWriter
+import java.io.*
 
 /**
  * Description:
@@ -43,6 +40,7 @@ class Rule {
 
 fun editAaptRule(project: Project, variant: ApplicationVariant) {
     val rulesPath = project.AaptRules(variant)
+    if(!File(rulesPath).exists()) return
     val rulesWrapper = Rules()
 
 

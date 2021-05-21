@@ -3,7 +3,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id "navigation-transform"
+    //id "navigation-transform"
 }
 
 
@@ -47,7 +47,7 @@ android {
 
         debug {
             //shrinkResources true
-            minifyEnabled true
+            //minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
