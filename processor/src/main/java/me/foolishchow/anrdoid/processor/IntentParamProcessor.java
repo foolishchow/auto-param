@@ -103,6 +103,7 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
 
             IntentParam annotation = element.getAnnotation(IntentParam.class);
             boolean originName = annotation.originName();
+            boolean removeAfterParse = annotation.remove();
             addFieldKey(builder, fieldName, keyName, originName);
 
             TypeMirror typeMirror = element.asType();
@@ -125,7 +126,7 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
             method.addStatement("return this");
             builder.addMethod(method.build());
 
-            addParse(parse, elements, element, fieldName, keyName, typeName);
+            addParse(parse, elements, element, fieldName, keyName, typeName,removeAfterParse);
 
         }
 
@@ -170,8 +171,8 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
             Element element,
             String fieldName,
             String keyName,
-            TypeName typeName
-    ) {
+            TypeName typeName,
+            boolean removeAfterParse) {
         //parse.addComment(format("field %s type %s ", fieldName, typeName.toString()));
         String preffix = format("activity.%s", fieldName);
         parse.beginControlFlow(format("if (intent.hasExtra(%s))", keyName));
@@ -232,6 +233,9 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
             parse.addStatement(format("%s = ($T)intent.getSerializableExtra(%s)", preffix, keyName), typeName);
         }
 
+        if(removeAfterParse){
+            parse.addStatement(format("intent.removeExtra(%s)", keyName));
+        }
         parse.endControlFlow();
     }
 

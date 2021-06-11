@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface IntentParam {
     boolean originName() default false;
+    boolean remove() default false;
 }
