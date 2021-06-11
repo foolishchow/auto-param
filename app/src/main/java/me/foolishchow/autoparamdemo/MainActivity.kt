@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import me.foolishchow.android.annotation.IntentParam
-import me.foolishchow.autoparamdemo.navigation.NavigationManager
 
 open class MainActivity : AppCompatActivity() {
     @JvmField
@@ -15,7 +14,7 @@ open class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val controller = navController
-        NavigationManager.attach(controller, R.navigation.main)
+        //NavigationManager.attach(controller, R.navigation.main)
         //val navDestinations = MainActivity(controller)
         //val inflate = controller!!.navInflater.inflate(R.navigation.main)
         //val displayName = inflate.navigatorName
