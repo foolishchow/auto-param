@@ -43,7 +43,8 @@ abstract class NavigationTask : DefaultTask() {
     /**
      * 缓存当前所有的文件名和方法名
      */
-    private val mFileNameWithMethodName = mutableMapOf<File, String>()
+    private val mFileNameWithAttachMethodName = mutableMapOf<File, String>()
+    private val mFileNameWithInflateMethodName = mutableMapOf<File, String>()
     private lateinit var mResource: ClassName
 
     @TaskAction
@@ -73,19 +74,42 @@ abstract class NavigationTask : DefaultTask() {
             parseAndGenerate(file)
         }
 
-        val method = MethodSpec.methodBuilder("attach")
+        val attachMethod = MethodSpec.methodBuilder("attach")
                 .addParameter(NavController, "controller")
                 .addParameter(ClassName.INT, "navigationId")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .beginControlFlow("switch(navigationId)")
 
-        mFileNameWithMethodName.forEach { item ->
-            method.addStatement("case \$T.navigation.${item.key.xmlName}:", mResource)
-            method.addStatement("   ${item.value}(controller)")
-            method.addStatement("break")
+
+
+        mFileNameWithAttachMethodName.forEach { item ->
+            attachMethod.addStatement("case \$T.navigation.${item.key.xmlName}:", mResource)
+            attachMethod.addStatement("   ${item.value}(controller)")
+            attachMethod.addStatement("break")
         }
-        method.endControlFlow()
-        mClass.addMethod(method.build())
+
+
+        attachMethod.endControlFlow()
+        mClass.addMethod(attachMethod.build())
+
+        val inflateMethod = MethodSpec.methodBuilder("inflate")
+                .addParameter(NavController, "controller")
+                .addParameter(ClassName.INT, "navigationId")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(NavGraph)
+                //.beginControlFlow("switch(navigationId)")
+
+        mFileNameWithInflateMethodName.forEach { item ->
+            inflateMethod.beginControlFlow("if(navigationId == \$T.navigation.${item.key.xmlName})",mResource)
+            inflateMethod.addStatement("   return ${item.value}(controller)")
+            inflateMethod.endControlFlow()
+            //inflateMethod.addStatement("case \$T.navigation.${item.key.xmlName}:", mResource)
+            //inflateMethod.addStatement("   return ${item.value}(controller)")
+            //inflateMethod.addStatement("break")
+        }
+        inflateMethod.addStatement("return null")
+        //inflateMethod.endControlFlow()
+        mClass.addMethod(inflateMethod.build())
 
         val javaFile = JavaFile.builder("$packageName.navigation", mClass.build())
                 .build()
@@ -98,16 +122,19 @@ abstract class NavigationTask : DefaultTask() {
 
     private fun parseAndGenerate(file: File) {
         val name = file.xmlName.snake2camel()
-        val methodName = "attachNavigation$name"
-        mFileNameWithMethodName[file] = methodName
-        val method = MethodSpec.methodBuilder(methodName)
+        val attachMethodName = "attachNavigation$name"
+        val inflateMethodName = "inflateNavigation$name"
+        mFileNameWithAttachMethodName[file] = attachMethodName
+        mFileNameWithInflateMethodName[file] = inflateMethodName
+        val inflateMethod = MethodSpec.methodBuilder(inflateMethodName)
                 .addParameter(NavController, "controller")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(NavGraph)
 
-        method.addStatement("\$T fragment", FragmentDestination)
-        method.addStatement("\$T action", NavAction)
-        method.addStatement("\$T.Builder builder", NavOptionsBuilder)
-        method.addStatement(
+        inflateMethod.addStatement("\$T fragment", FragmentDestination)
+        inflateMethod.addStatement("\$T action", NavAction)
+        inflateMethod.addStatement("\$T.Builder builder", NavOptionsBuilder)
+        inflateMethod.addStatement(
                 "\$T graph = controller.getNavigatorProvider().getNavigator(\$T.class).createDestination()",
                 NavGraph, NavGraphNavigator
         )
@@ -117,27 +144,33 @@ abstract class NavigationTask : DefaultTask() {
             val value = attr.value
             if (attr.key.isResId) {
 
-                method.addStatement("graph.setId(\$T.id.${value.resId})", mResource)
+                inflateMethod.addStatement("graph.setId(\$T.id.${value.resId})", mResource)
             }
             if (attr.key.isStartDestination) {
-                method.addStatement("graph.setStartDestination(\$T.id.${value.resId})", mResource)
+                inflateMethod.addStatement("graph.setStartDestination(\$T.id.${value.resId})", mResource)
             }
             if (attr.key.isAndroidLabel) {
-                method.addStatement("graph.setLabel(\"${attr.value}\")", mResource)
+                inflateMethod.addStatement("graph.setLabel(\"${attr.value}\")", mResource)
             }
         }
 
 
         navigation.children().forEach { node ->
             if (node is Node) {
-                parseFragment(node, method)
+                parseFragment(node, inflateMethod)
             }
         }
+        inflateMethod.addStatement("return (\$T)graph",NavGraph)
 
-        method.addStatement("controller.setGraph((\$T)graph)", NavGraph)
+        val attachMethod = MethodSpec.methodBuilder(attachMethodName)
+                .addParameter(NavController, "controller")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 
-        mClass.addMethod(method.build())
+        // method.addStatement("controller.setGraph((\$T)graph)", NavGraph)
+        attachMethod.addStatement("controller.setGraph(${inflateMethodName}(controller))")
 
+        mClass.addMethod(inflateMethod.build())
+        mClass.addMethod(attachMethod.build())
     }
 
 
@@ -251,7 +284,7 @@ abstract class NavigationTask : DefaultTask() {
         ruleFile.delete()
         val fw = FileWriter(ruleFile.absoluteFile)
         val bw = BufferedWriter(fw)
-        mFileNameWithMethodName.forEach { attr ->
+        mFileNameWithAttachMethodName.forEach { attr ->
             bw.write(attr.key.absolutePath)
             bw.newLine()
         }
@@ -269,7 +302,7 @@ abstract class NavigationTask : DefaultTask() {
         val resources = document.createElement("resources")
         resources.setAttribute("xmlns:tools", "http://schemas.android.com/tools")
         val discards = mutableListOf<String>()
-        mFileNameWithMethodName.forEach { item ->
+        mFileNameWithAttachMethodName.forEach { item ->
             discards.add("@navigation/${item.key.xmlName}")
         }
         resources.setAttribute("tools:discard", discards.joinToString(separator = ",") { it })
