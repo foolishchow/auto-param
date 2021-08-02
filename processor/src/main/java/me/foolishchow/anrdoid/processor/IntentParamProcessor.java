@@ -42,10 +42,10 @@ public class IntentParamProcessor extends BaseAnnotationProcessor {
                     , element);
             return;
         }
-        if (modifiers.contains(Modifier.PUBLIC)) {
-            printInfo("the modifier of the field is public, this will expose context info"
-                    , element);
-        }
+        //if (modifiers.contains(Modifier.PUBLIC)) {
+        //    printInfo("the modifier of the field is public, this will expose context info"
+        //            , element);
+        //}
 
         mElements.add(element);
     }
